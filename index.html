@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sõnastikuandmete pärimine</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #059669;
+            --warning: #d97706;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --card-shadow-hover: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            border-left: 6px solid #f59e0b;
+        }
+
+        .problem-section h2 {
+            color: #92400e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .problem-section .scenario {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .problem-section .scenario p {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .problem-section .question {
+            color: #b45309;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        /* Solution Cards */
+        .solutions-header {
+            text-align: center;
+            color: white;
+            margin: 2rem 0 1.5rem;
+        }
+
+        .solutions-header h2 {
+            font-size: 1.75rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .solution-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .solution-header {
+            padding: 1.25rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .solution-header.database {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .solution-header.api {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .solution-header.ui {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+
+        .solution-header h3 {
+            font-size: 1.35rem;
+        }
+
+        .solution-header .icon {
+            font-size: 1.75rem;
+        }
+
+        .solution-body {
+            padding: 1.5rem;
+        }
+
+        .solution-body .tagline {
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .api-note, .ui-note, .db-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        .api-note {
+            background: #eff6ff;
+        }
+
+        .ui-note {
+            background: #f5f3ff;
+        }
+
+        .db-note {
+            background: #f0fdf4;
+        }
+
+        .use-case {
+            background: #f0fdf4;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .use-case.api-case {
+            background: #eff6ff;
+            border-left-color: var(--primary);
+        }
+
+        .use-case.ui-case {
+            background: #f5f3ff;
+            border-left-color: var(--secondary);
+        }
+
+        .use-case h4 {
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .use-case p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .best-for {
+            margin-top: 1rem;
+        }
+
+        .best-for h4 {
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .best-for-list {
+            list-style: none;
+        }
+
+        .best-for-list li {
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .best-for-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .limits {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .limits h4 {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .limits-list {
+            list-style: none;
+        }
+
+        .limits-list li {
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .limits-list li::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .output-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .output-box.api-output {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .output-box.ui-output {
+            background: #f5f3ff;
+            border-color: #ddd6fe;
+        }
+
+        .output-box span {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+
+        /* Scenarios Section */
+        .scenarios-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .scenarios-section h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .scenarios-section > p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .scenario-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .scenario-item:hover {
+            background: #f8fafc;
+        }
+
+        .scenario-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .scenario-problem {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .scenario-problem .number {
+            background: var(--bg-light);
+            color: var(--text-muted);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .scenario-problem .text {
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .scenario-answer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .answer-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .answer-badge.db {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .answer-badge.api {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .answer-badge.ui {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        /* Flow Section */
+        .flow-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .flow-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .flow-section > p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .architecture-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-item {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flow-item.db { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .flow-item.api { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+        .flow-item.ui { background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); }
+
+        .flow-arrow {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .flow-description {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .flow-description {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .flow-desc-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .flow-desc-item h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-desc-item p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .example-box code {
+            color: #e2e8f0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
+            white-space: pre;
+        }
+
+        .example-box .keyword { color: #c084fc; }
+        .example-box .string { color: #86efac; }
+        .example-box .number { color: #fcd34d; }
+        .example-box .property { color: #7dd3fc; }
+        .example-box .comment { color: #94a3b8; }
+
+        /* Quick Reference */
+        .quick-ref {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            overflow-x: auto;
+        }
+
+        .quick-ref h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        td {
+            color: var(--text-muted);
+        }
+
+        tr:hover td {
+            background: #f1f5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-db { background: #d1fae5; color: #047857; }
+        .badge-api { background: #dbeafe; color: #1d4ed8; }
+        .badge-ui { background: #ede9fe; color: #6d28d9; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .scenario-item {
+                grid-template-columns: 1fr;
+            }
+
+            .scenario-answer {
+                justify-content: flex-start;
+                padding-left: 3rem;
+            }
+        }
+
+        /* LLM workflow section */
+        .workflow-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .workflow-section h2 {
+            color: #047857;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .workflow-step {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .workflow-step .step-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-step .step-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .workflow-arrow {
+            color: #059669;
+            font-size: 1.5rem;
+        }
+
+        /* Detailed Workflow Example */
+        .workflow-example {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .workflow-example h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .workflow-intro {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        .workflow-step-detail {
+            background: var(--bg-light);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #e2e8f0;
+        }
+
+        .workflow-step-detail:nth-child(2) {
+            border-left-color: var(--accent);
+        }
+
+        .workflow-step-detail:nth-child(3) {
+            border-left-color: var(--primary);
+        }
+
+        .workflow-step-detail:nth-child(4) {
+            border-left-color: var(--primary);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-header h3 {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            min-width: 200px;
+        }
+
+        .step-task {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .why-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 700px) {
+            .why-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .why-this, .why-not {
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .why-this {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .why-not {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .why-this h4, .why-not h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .why-this h4 {
+            color: #047857;
+        }
+
+        .why-not h4 {
+            color: #dc2626;
+        }
+
+        .why-this ul, .why-not ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .why-this li, .why-not li {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 0.25rem 0;
+        }
+
+        .why-this li strong, .why-not li strong {
+            color: var(--text-dark);
+        }
+
+        .step-output {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .output-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .output-file {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        .output-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .workflow-summary {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .workflow-summary h4 {
+            color: #1d4ed8;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .summary-item .answer-badge {
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .summary-item p strong {
+            color: var(--text-dark);
+        }
+
+        .summary-item p em {
+            color: var(--primary);
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        /* API Tools Section */
+        .api-tools-section, .scripting-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .api-tools-section h2, .scripting-section h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .section-intro {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--bg-light);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tool-card h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .tool-link:hover {
+            text-decoration: underline;
+        }
+
+        .tools-limitation {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .limitation-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .tools-limitation div {
+            color: #92400e;
+            font-size: 0.9rem;
+        }
+
+        /* Scripting Section */
+        .scripting-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 800px) {
+            .scripting-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .scripting-why, .scripting-example {
+            background: var(--bg-light);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .scripting-why h4, .scripting-example h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .scripting-why ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .scripting-why li {
+            padding: 0.4rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .scripting-why li strong {
+            color: var(--text-dark);
+        }
+
+        .scripting-note {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: #1e40af;
+            font-size: 0.9rem;
+        }
+
+        .scripting-note strong {
+            color: #1d4ed8;
+        }
+
+        /* Collapsible Sections */
+        .collapsible-section {
+            background: white;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+            border-bottom: 1px solid #e2e8f0;
+            list-style: none;
+            transition: background 0.2s;
+        }
+
+        .section-toggle:hover {
+            background: linear-gradient(135deg, #e2e8f0 0%, var(--bg-light) 100%);
+        }
+
+        .section-toggle::-webkit-details-marker {
+            display: none;
+        }
+
+        .section-toggle h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        details[open] .toggle-icon {
+            transform: rotate(0deg);
+        }
+
+        details:not([open]) .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            padding: 1.5rem;
+        }
+
+        /* Adjust existing section styles for collapsible */
+        .collapsible-section .solutions-grid {
+            margin-bottom: 0;
+        }
+
+        .collapsible-section .workflow-intro {
+            margin-bottom: 1.5rem;
+        }
+
+        .scenarios-content .scenario-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .table-content {
+            overflow-x: auto;
+        }
+
+        .flow-content > p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Remove old section backgrounds since they're now in collapsible */
+        .collapsible-section .tools-grid,
+        .collapsible-section .scripting-grid {
+            margin-bottom: 1rem;
+        }
+
+        .collapsible-section .tools-limitation,
+        .collapsible-section .scripting-note {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kuidas pärida sõnastikuandmeid?</h1>
+            <p>Vali õige meetod andmete kättesaamiseks</p>
+        </header>
+
+        <!-- Problem Section -->
+        <section class="problem-section">
+            <h2>🤔 Tuttav olukord?</h2>
+            <div class="scenario">
+                <p>„Tahan kasutada sõnastikuandmeid LLM-i treenimiseks või promptide koostamiseks. Aga kuidas ma need andmed kätte saan — kas kasutajaliidese kaudu, API-ga või otse andmebaasist?"</p>
+                <p class="question">Millist meetodit kasutada?</p>
+            </div>
+        </section>
+
+        <!-- Workflow Section -->
+        <section class="workflow-section">
+            <h2>Tüüpiline töövoog</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-icon">🗄️</div>
+                    <div class="step-text">Päri andmed</div>
+                </div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step">
+                    <div class="step-icon">📊</div>
+                    <div class="step-text">Ekspordi Excelisse</div>
+                </div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step">
+                    <div class="step-icon">🤖</div>
+                    <div class="step-text">Kasuta LLM-iga</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solutions Section - Collapsible -->
+        <details class="collapsible-section" open>
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>Kolm viisi andmete pärimiseks</h2>
+            </summary>
+
+            <!-- Solution Cards -->
+            <div class="solutions-grid">
+            <!-- Database -->
+            <div class="solution-card">
+                <div class="solution-header database">
+                    <span class="icon">🗄️</span>
+                    <h3>Andmebaas</h3>
+                </div>
+                <div class="solution-body">
+                    <p class="tagline">„Tahan kätte saada palju andmeid korraga, keerukate filtritega"</p>
+
+                    <div class="db-note">
+                        Siin: <strong>Ekilexi andmebaas</strong> (PostgreSQL)
+                    </div>
+
+                    <div class="use-case">
+                        <h4>📋 Näide:</h4>
+                        <p>Anna mulle kõik sõnad, mis on märgendiga „vananenud" ja sõnaliigiga „nimisõna".</p>
+                    </div>
+
+                    <div class="example-box">
+                        <code><span class="comment">-- Kõik vananenud nimisõnad</span>
+<span class="keyword">SELECT</span> headword, definition
+<span class="keyword">FROM</span> entries
+<span class="keyword">WHERE</span> label = <span class="string">'vananenud'</span>
+<span class="keyword">AND</span> pos = <span class="string">'S'</span>;
+
+<span class="comment">-- Tulemus: 847 rida → eksport CSV</span></code>
+                    </div>
+
+                    <div class="output-box">
+                        <span>📥 <strong>Väljund:</strong> CSV/Excel tuhandete ridadega</span>
+                    </div>
+
+                    <div class="best-for">
+                        <h4>✓ Sobib hästi:</h4>
+                        <ul class="best-for-list">
+                            <li>Hulgieksport (sadu-tuhandeid sõnu)</li>
+                            <li>Keerukad filtrid ja kombinatsioonid</li>
+                            <li>Statistilised päringud</li>
+                            <li>Andmete ettevalmistamine LLM-ile</li>
+                        </ul>
+                    </div>
+
+                    <div class="limits">
+                        <h4>✗ Piirangud:</h4>
+                        <ul class="limits-list">
+                            <li>Vajab SQL-i oskust või abi arendajalt</li>
+                            <li>Pole reaalajas (tuleb eksportida)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API -->
+            <div class="solution-card">
+                <div class="solution-header api">
+                    <span class="icon">🔌</span>
+                    <h3>API</h3>
+                </div>
+                <div class="solution-body">
+                    <p class="tagline">„Tahan teada, mida tähendab konkreetne sõna X"</p>
+
+                    <div class="api-note">
+                        Siin: <strong>Ekilexi API</strong>, <strong>Sketch Engine'i API</strong>
+                    </div>
+
+                    <div class="use-case api-case">
+                        <h4>📋 Näide:</h4>
+                        <p>Mis on sõna „ilmutama" definitsioon ja näitelaused?</p>
+                    </div>
+
+                    <div class="example-box">
+                        <code><span class="keyword">GET</span> /api/entries/ilmutama
+
+{
+  <span class="property">"headword"</span>: <span class="string">"ilmutama"</span>,
+  <span class="property">"pos"</span>: <span class="string">"tegusõna"</span>,
+  <span class="property">"definitions"</span>: [
+    <span class="string">"nähtavale tooma"</span>,
+    <span class="string">"avaldama, väljendama"</span>
+  ],
+  <span class="property">"examples"</span>: [...]
+}</code>
+                    </div>
+
+                    <div class="output-box api-output">
+                        <span>📥 <strong>Väljund:</strong> JSON ühe sõna kohta</span>
+                    </div>
+
+                    <div class="best-for">
+                        <h4>✓ Sobib hästi:</h4>
+                        <ul class="best-for-list">
+                            <li>Üksiku sõna tähenduse pärimine</li>
+                            <li>Rakenduste ja skriptide integratsioon</li>
+                            <li>Automaatne pärimine (nt tsüklis)</li>
+                            <li>Reaalajas andmed</li>
+                        </ul>
+                    </div>
+
+                    <div class="limits">
+                        <h4>✗ Piirangud:</h4>
+                        <ul class="limits-list">
+                            <li>Üks sõna korraga (pole hulgieksporti)</li>
+                            <li>Piiratud filtreerimisvõimalused</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI -->
+            <div class="solution-card">
+                <div class="solution-header ui">
+                    <span class="icon">🖥️</span>
+                    <h3>Kasutajaliides</h3>
+                </div>
+                <div class="solution-body">
+                    <p class="tagline">„Tahan kiiresti üht sõna järele vaadata"</p>
+
+                    <div class="ui-note">
+                        Siin: <strong>Sõnaveeb</strong>, <strong>Ekilex</strong>, <strong>Sketch Engine</strong>
+                    </div>
+
+                    <div class="use-case ui-case">
+                        <h4>📋 Näide:</h4>
+                        <p>Vaatan brauseris, kuidas on kirjeldatud sõna „päike".</p>
+                    </div>
+
+                    <div class="example-box">
+                        <code>┌─────────────────────────────┐
+│ 🔍 päike             [Otsi] │
+├─────────────────────────────┤
+│ <span class="keyword">päike</span>  <span class="string">nimisõna</span>             │
+│                             │
+│ Maad ja teisi planeete      │
+│ valgustav ja soojendav      │
+│ taevakeha                   │
+│                             │
+│ „Päike tõuseb idast."       │
+└─────────────────────────────┘</code>
+                    </div>
+
+                    <div class="output-box ui-output">
+                        <span>📥 <strong>Väljund:</strong> Ekraanipilt või copy-paste</span>
+                    </div>
+
+                    <div class="best-for">
+                        <h4>✓ Sobib hästi:</h4>
+                        <ul class="best-for-list">
+                            <li>Kiire järelevaatamine</li>
+                            <li>Visuaalne ülevaade</li>
+                            <li>Ei vaja tehnilisi oskusi</li>
+                        </ul>
+                    </div>
+
+                    <div class="limits">
+                        <h4>✗ Piirangud:</h4>
+                        <ul class="limits-list">
+                            <li>Üks sõna korraga, käsitsi</li>
+                            <li>Ei saa keerukaid filtreid kasutada</li>
+                            <li>Ei saa andmeid eksportida</li>
+                            <li>Aeganõudev suurte koguste puhul</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </details>
+
+        <!-- Detailed Workflow Example -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>📖 Näide: LLM-iga registrite kontrollimine</h2>
+            </summary>
+            <div class="collapsible-content">
+            <p class="workflow-intro">Tahan kontrollida, kas kõnekeelsete sõnade registrimärgendid on õiged. Selleks vajan sõnastikuandmeid + korpuse näiteid + LLM-i hinnangut.</p>
+
+            <!-- Step 1 -->
+            <div class="workflow-step-detail">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <h3>Pärin kõik kõnekeelsed sõnad koos seletustega</h3>
+                    <span class="answer-badge db">🗄️ Andmebaas</span>
+                </div>
+
+                <div class="step-task">
+                    <strong>Ülesanne:</strong> Vajan EKI ühendsõnastikust kõiki keelendeid, millel on register „kõnek", koos nende kõigi tähenduste seletustega.
+                </div>
+
+                <div class="example-box">
+                    <code><span class="keyword">SELECT</span> w.word, d.definition, d.register
+<span class="keyword">FROM</span> words w
+<span class="keyword">JOIN</span> definitions d <span class="keyword">ON</span> w.id = d.word_id
+<span class="keyword">WHERE</span> d.register = <span class="string">'kõnek'</span>;
+
+<span class="comment">-- Tulemus: 2341 rida</span></code>
+                </div>
+
+                <div class="why-section">
+                    <div class="why-this">
+                        <h4>✓ Miks andmebaas?</h4>
+                        <ul>
+                            <li><strong>Hulgi­päring:</strong> Vajan kõiki sõnu korraga (2000+), mitte ükshaaval</li>
+                            <li><strong>Keerukas filter:</strong> Filtreerin konkreetse registri järgi</li>
+                            <li><strong>Seotud andmed:</strong> Vajan nii sõna kui seletust ühes päringus</li>
+                            <li><strong>Eksport:</strong> Saan tulemuse kohe CSV/Excelisse</li>
+                        </ul>
+                    </div>
+                    <div class="why-not">
+                        <h4>✗ Miks mitte teised?</h4>
+                        <ul>
+                            <li><strong>API:</strong> Ei saa filtreerida registri järgi; peaks iga sõna eraldi küsima</li>
+                            <li><strong>Kasutaja­liides:</strong> Peaks 2000+ sõna ükshaaval läbi klikkima — võimatu</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-output">
+                    <span class="output-label">Väljund:</span>
+                    <span class="output-file">📄 konekeelsed_sonad.csv</span>
+                    <span class="output-desc">(2341 rida: sõna, seletus, register)</span>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="workflow-step-detail">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h3>Küsin Sketch Engine'ist iga sõna konkordantsid</h3>
+                    <span class="answer-badge api">🔌 API</span>
+                </div>
+
+                <div class="step-task">
+                    <strong>Ülesanne:</strong> Iga sõna kohta tahan näha, kuidas seda päriselt kasutatakse — vajan korpusest näitelauseid.
+                </div>
+
+                <div class="example-box">
+                    <code><span class="comment"># Pythoni skript, mis küsib iga sõna kohta</span>
+<span class="keyword">for</span> word <span class="keyword">in</span> words_list:
+    response = requests.get(
+        <span class="string">"https://api.sketchengine.eu/concordance"</span>,
+        params={<span class="string">"q"</span>: word, <span class="string">"corpus"</span>: <span class="string">"ettenten"</span>}
+    )
+    concordances[word] = response.json()
+
+<span class="comment"># Tulemus: iga sõna kohta 10-20 näitelauset</span></code>
+                </div>
+
+                <div class="why-section">
+                    <div class="why-this">
+                        <h4>✓ Miks API?</h4>
+                        <ul>
+                            <li><strong>Automatiseerimine:</strong> Skript küsib 2000+ sõna eest automaatselt</li>
+                            <li><strong>Programmiline töötlus:</strong> Vastus tuleb JSON-ina, mida saab kohe töödelda</li>
+                            <li><strong>Välise süsteemi integratsioon:</strong> Sketch Engine'i andmed pole meie andmebaasis</li>
+                        </ul>
+                    </div>
+                    <div class="why-not">
+                        <h4>✗ Miks mitte teised?</h4>
+                        <ul>
+                            <li><strong>Andmebaas:</strong> Sketch Engine'i andmed pole meie andmebaasis — ei saa SQL-iga pärida</li>
+                            <li><strong>Kasutaja­liides:</strong> Peaks iga sõna käsitsi Sketch Engine'i veebilehel otsima</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-output">
+                    <span class="output-label">Väljund:</span>
+                    <span class="output-file">📄 concordances.json</span>
+                    <span class="output-desc">(iga sõna + näitelaused korpusest)</span>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="workflow-step-detail">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Saadan LLM-ile hindamiseks</h3>
+                    <span class="answer-badge api">🔌 API</span>
+                </div>
+
+                <div class="step-task">
+                    <strong>Ülesanne:</strong> Iga sõna kohta panen kokku prompti (sõna + seletus + näitelaused) ja küsin LLM-ilt, kas „kõnek" register tundub õige.
+                </div>
+
+                <div class="example-box">
+                    <code><span class="keyword">for</span> word, data <span class="keyword">in</span> combined_data.items():
+    prompt = <span class="string">f"""
+    Sõna: {word}
+    Seletus: {data['definition']}
+    Näitelaused korpusest:
+    {data['concordances']}
+
+    Kas register "kõnekeelne" on selle sõna puhul õige?
+    """</span>
+
+    response = openai.chat.completions.create(
+        model=<span class="string">"gpt-4"</span>,
+        messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: prompt}]
+    )</code>
+                </div>
+
+                <div class="why-section">
+                    <div class="why-this">
+                        <h4>✓ Miks API?</h4>
+                        <ul>
+                            <li><strong>Automatiseerimine:</strong> 2000+ sõna hindamine käsitsi võtaks nädalaid</li>
+                            <li><strong>Struktureeritud sisend:</strong> Saame prompti programmiliselt kokku panna</li>
+                            <li><strong>Struktureeritud väljund:</strong> LLM-i vastuse saab kohe CSV-sse salvestada</li>
+                        </ul>
+                    </div>
+                    <div class="why-not">
+                        <h4>✗ Miks mitte teised?</h4>
+                        <ul>
+                            <li><strong>Andmebaas:</strong> LLM pole andmebaas — ei saa SQL-iga küsida</li>
+                            <li><strong>Kasutaja­liides:</strong> ChatGPT veebis: peaks iga prompti käsitsi kleepima</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-output">
+                    <span class="output-label">Väljund:</span>
+                    <span class="output-file">📄 llm_hinnangud.csv</span>
+                    <span class="output-desc">(sõna, praegune register, LLM-i soovitus, põhjendus)</span>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="workflow-summary">
+                <h4>Kokkuvõte: miks iga samm just nii?</h4>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="answer-badge db">🗄️ Samm 1</span>
+                        <p><strong>Andmebaas</strong>, sest vajan <em>palju andmeid</em> korraga, <em>keeruka filtriga</em></p>
+                    </div>
+                    <div class="summary-item">
+                        <span class="answer-badge api">🔌 Samm 2</span>
+                        <p><strong>API</strong>, sest pean küsima <em>välisest süsteemist</em> (Sketch Engine), <em>automatiseeritult</em></p>
+                    </div>
+                    <div class="summary-item">
+                        <span class="answer-badge api">🔌 Samm 3</span>
+                        <p><strong>API</strong>, sest pean töötlema <em>tuhandeid kirjeid</em> LLM-iga <em>automaatselt</em></p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </details>
+
+        <!-- Scenarios Section -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>🎯 Kiired näited</h2>
+            </summary>
+            <div class="collapsible-content scenarios-content">
+            <p class="section-intro">Millist viisi kasutada erinevates olukordades?</p>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">1</span>
+                    <span class="text">„Vajan kõiki sõnu, mille definitsioon sisaldab sõna <em>vesi</em>."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge db">🗄️ Andmebaas</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">2</span>
+                    <span class="text">„Mis tähendab sõna <em>kihistuma</em>?"</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge api">🔌 API</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">3</span>
+                    <span class="text">„Tahan kiiresti kontrollida, kas sõna <em>nutitelefon</em> on sõnastikus."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge ui">🖥️ Kasutajaliides</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">4</span>
+                    <span class="text">„Vajan kõiki murdekeelseid sõnu Excelisse."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge db">🗄️ Andmebaas</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">5</span>
+                    <span class="text">„Kirjutan skripti, mis küsib LLM-ilt iga sõna kohta sünonüüme."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge api">🔌 API</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">6</span>
+                    <span class="text">„Mitu sõna on sõnastikus sõnaliigi kaupa?"</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge db">🗄️ Andmebaas</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">7</span>
+                    <span class="text">„Tahan oma rakenduses näidata sõna definitsiooni."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge api">🔌 API</span>
+                </div>
+            </div>
+
+            <div class="scenario-item">
+                <div class="scenario-problem">
+                    <span class="number">8</span>
+                    <span class="text">„Tahan näha, millised näitelaused on sõnal <em>raamat</em>."</span>
+                </div>
+                <div class="scenario-answer">
+                    <span class="answer-badge ui">🖥️ Kasutajaliides</span>
+                </div>
+            </div>
+            </div>
+        </details>
+
+        <!-- API Tools Section -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>🔧 API testimise tööriistad</h2>
+            </summary>
+            <div class="collapsible-content tools-content">
+            <p class="section-intro">API-sid saab proovida ka ilma programmeerimata — aga ainult üks päring korraga.</p>
+
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h4>Postman</h4>
+                    <p>Universaalne tööriist API-de testimiseks. Saad saata päringuid ja näha vastuseid mugavas liideses.</p>
+                    <a href="https://www.postman.com/" target="_blank" class="tool-link">postman.com →</a>
+                </div>
+                <div class="tool-card">
+                    <h4>Sketch Engine API</h4>
+                    <p>Sketch Engine'i enda API dokumentatsioon ja testimiskeskkond.</p>
+                    <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">API dokumentatsioon →</a>
+                </div>
+                <div class="tool-card">
+                    <h4>Ekilexi API</h4>
+                    <p>EKI sõnastikuandmete programmiline pärimine.</p>
+                    <a href="https://ekilex.ee/api" target="_blank" class="tool-link">Ekilexi API →</a>
+                </div>
+            </div>
+
+            <div class="tools-limitation">
+                <span class="limitation-icon">⚠️</span>
+                <div>
+                    <strong>Piirang:</strong> Nende tööriistadega saab teha ainult üksikpäringuid — üks sõna korraga.
+                    Kui vaja pärida sadu või tuhandeid sõnu, tuleb kirjutada skript.
+                </div>
+            </div>
+            </div>
+        </details>
+
+        <!-- Scripting Section -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>🐍 Hulkpäringuteks on vaja skripti</h2>
+            </summary>
+            <div class="collapsible-content scripting-content">
+            <p class="section-intro">Kui tahad API-ga pärida rohkem kui paar sõna, pead kirjutama programmi, mis teeb päringuid sinu eest.</p>
+
+            <div class="scripting-grid">
+                <div class="scripting-why">
+                    <h4>Miks skript?</h4>
+                    <ul>
+                        <li><strong>Automatiseerimine:</strong> Skript küsib 1000 sõna eest — sina ei pea</li>
+                        <li><strong>Kiirus:</strong> Programm teeb sekundis kümneid päringuid</li>
+                        <li><strong>Töötlus:</strong> Vastused saab kohe faili salvestada või edasi töödelda</li>
+                        <li><strong>Korratavus:</strong> Sama skripti saab uuesti käivitada uute andmetega</li>
+                    </ul>
+                </div>
+                <div class="scripting-example">
+                    <h4>Näide: Pythoni skript</h4>
+                    <div class="example-box">
+                        <code><span class="keyword">import</span> requests
+<span class="keyword">import</span> csv
+
+<span class="comment"># Loen sõnad failist</span>
+words = open(<span class="string">"sonad.txt"</span>).readlines()
+
+<span class="comment"># Küsin iga sõna kohta</span>
+<span class="keyword">for</span> word <span class="keyword">in</span> words:
+    resp = requests.get(
+        <span class="string">f"https://api.ekilex.ee/word/{word}"</span>
+    )
+    <span class="comment"># Salvestan tulemuse...</span></code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scripting-note">
+                <strong>Ei oska programmeerida?</strong> Küsi abi arendajalt või kasuta LLM-i (nt Claude, ChatGPT), et skript kirjutada.
+                Piisab kui kirjeldad, mida tahad teha.
+            </div>
+            </div>
+        </details>
+
+        <!-- Quick Reference -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>📊 Kiire võrdlus</h2>
+            </summary>
+            <div class="collapsible-content table-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Küsimus</th>
+                        <th><span class="badge badge-db">Andmebaas</span></th>
+                        <th><span class="badge badge-api">API</span></th>
+                        <th><span class="badge badge-ui">Kasutajaliides</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Mida küsida?</strong></td>
+                        <td>Kõik sõnad, mis vastavad tingimusele X</td>
+                        <td>Mida tähendab sõna X?</td>
+                        <td>Vaatan sõna X</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kui palju andmeid?</strong></td>
+                        <td>Sadu kuni tuhandeid</td>
+                        <td>Üks korraga (automatiseeritav)</td>
+                        <td>Üks korraga (käsitsi)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Filtreerimine?</strong></td>
+                        <td>Väga paindlik (SQL)</td>
+                        <td>Piiratud (API parameetrid)</td>
+                        <td>Lihtne otsing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Väljund?</strong></td>
+                        <td>CSV, Excel, JSON</td>
+                        <td>JSON</td>
+                        <td>Ekraanil (copy-paste)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tehniline oskus?</strong></td>
+                        <td>SQL või arendaja abi</td>
+                        <td>Minimaalne programmeerimine</td>
+                        <td>Pole vaja</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LLM-i jaoks?</strong></td>
+                        <td>Treeningandmed, hulgianalüüs</td>
+                        <td>Prompti rikastamine</td>
+                        <td>Käsitsi kopeerimine</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </details>
+
+        <!-- Flow Section -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>🔗 Kuidas need omavahel seotud on?</h2>
+            </summary>
+            <div class="collapsible-content flow-content">
+            <p>Andmed liiguvad läbi kihtide — igaüks pakub erinevat juurdepääsu</p>
+
+            <div class="architecture-flow">
+                <span class="flow-item db">🗄️ Andmebaas</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item api">🔌 API</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item ui">🖥️ Kasutajaliides</span>
+            </div>
+
+            <div class="flow-description">
+                <div class="flow-desc-item">
+                    <h4>Kõik andmed</h4>
+                    <p>Täielik juurdepääs, keerukad päringud, hulgieksport.</p>
+                </div>
+                <div class="flow-desc-item">
+                    <h4>Struktureeritud juurdepääs</h4>
+                    <p>Programmide jaoks, üks kirje korraga, reaalajas.</p>
+                </div>
+                <div class="flow-desc-item">
+                    <h4>Inimloetav vaade</h4>
+                    <p>Visuaalne, mugav sirvimiseks, piiratud filtrid.</p>
+                </div>
+            </div>
+            </div>
+        </details>
+
+        <footer>
+            <p>Eesti Keele Instituut — Andmete pärimise juhend</p>
+        </footer>
+    </div>
+</body>
+</html>
