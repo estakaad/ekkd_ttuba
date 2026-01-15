@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sõnastikuandmete pärimine</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -1053,6 +1054,270 @@
         .collapsible-section .scripting-note {
             margin-top: 1rem;
         }
+
+        /* SQL Interactive Section */
+        .sql-section {
+            background: white;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .sql-header {
+            background: linear-gradient(135deg, var(--accent) 0%, #047857 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sql-header h2 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .sql-content {
+            padding: 1.5rem;
+        }
+
+        .sql-intro {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .sql-schema-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sql-schema-info h4 {
+            color: #047857;
+            margin-bottom: 0.75rem;
+        }
+
+        .schema-tables {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .schema-table {
+            background: white;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #047857;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .schema-table:hover {
+            background: #dcfce7;
+        }
+
+        .sql-editor-container {
+            margin-bottom: 1rem;
+        }
+
+        .sql-editor-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        #sql-editor {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            resize: vertical;
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        #sql-editor:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .sql-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .sql-run-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sql-run-btn:hover {
+            background: #047857;
+        }
+
+        .sql-example-btn {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sql-example-btn:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .sql-results {
+            margin-top: 1rem;
+        }
+
+        .sql-results-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sql-results-count {
+            background: var(--accent);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+        }
+
+        #sql-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        #sql-results-table th {
+            background: var(--bg-light);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        #sql-results-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-muted);
+        }
+
+        #sql-results-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .sql-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        .sql-loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .sql-examples-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .sql-examples-section h4 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .example-queries {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .example-query {
+            background: var(--bg-light);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .example-query:hover {
+            background: #e2e8f0;
+        }
+
+        .example-query-num {
+            background: var(--accent);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .example-query-text {
+            flex: 1;
+        }
+
+        .example-query-desc {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .example-query-sql {
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1267,6 +1532,106 @@
             </div>
         </div>
         </details>
+
+        <!-- Interactive SQL Section -->
+        <section class="sql-section">
+            <div class="sql-header">
+                <span style="font-size: 1.5rem;">🗄️</span>
+                <h2>Proovi ise: SQL päringud</h2>
+            </div>
+            <div class="sql-content">
+                <p class="sql-intro">
+                    Siin on Ekilexi andmebaasi lihtsustatud versioon kahe sõnaga: <strong>mure</strong> ja <strong>park</strong>.
+                    Proovi ise SQL päringuid teha!
+                </p>
+
+                <div class="sql-schema-info">
+                    <h4>Andmebaasi tabelid (kliki, et näha struktuuri):</h4>
+                    <div class="schema-tables">
+                        <span class="schema-table" onclick="showTable('word')">word</span>
+                        <span class="schema-table" onclick="showTable('meaning')">meaning</span>
+                        <span class="schema-table" onclick="showTable('definition')">definition</span>
+                        <span class="schema-table" onclick="showTable('lexeme')">lexeme</span>
+                        <span class="schema-table" onclick="showTable('dataset')">dataset</span>
+                    </div>
+                </div>
+
+                <div class="sql-editor-container">
+                    <label class="sql-editor-label">SQL päring:</label>
+                    <textarea id="sql-editor" placeholder="Kirjuta siia SQL päring...">SELECT * FROM word WHERE lang = 'est';</textarea>
+                </div>
+
+                <div class="sql-buttons">
+                    <button class="sql-run-btn" onclick="runQuery()">
+                        <span>▶</span> Käivita päring
+                    </button>
+                </div>
+
+                <div class="sql-results">
+                    <div class="sql-results-label">
+                        Tulemus: <span id="results-count" class="sql-results-count">0 rida</span>
+                    </div>
+                    <div id="sql-output">
+                        <div class="sql-loading">Andmebaas laeb...</div>
+                    </div>
+                </div>
+
+                <div class="sql-examples-section">
+                    <h4>Näitepäringud (kliki, et proovida):</h4>
+                    <div class="example-queries">
+                        <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE lang = 'est';`)">
+                            <span class="example-query-num">1</span>
+                            <div class="example-query-text">
+                                <div class="example-query-desc">Kõik eestikeelsed sõnad</div>
+                                <div class="example-query-sql">SELECT * FROM word WHERE lang = 'est';</div>
+                            </div>
+                        </div>
+                        <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE value = 'park';`)">
+                            <span class="example-query-num">2</span>
+                            <div class="example-query-text">
+                                <div class="example-query-desc">Kõik "park" sõnad (mitu homonüümi!)</div>
+                                <div class="example-query-sql">SELECT * FROM word WHERE value = 'park';</div>
+                            </div>
+                        </div>
+                        <div class="example-query" onclick="setQuery(`SELECT w.value, w.lang, d.value as definitsioon
+FROM word w
+JOIN lexeme l ON w.id = l.word_id
+JOIN definition d ON l.meaning_id = d.meaning_id
+WHERE w.value = 'mure' AND w.lang = 'est';`)">
+                            <span class="example-query-num">3</span>
+                            <div class="example-query-text">
+                                <div class="example-query-desc">Sõna "mure" kõik tähendused</div>
+                                <div class="example-query-sql">SELECT w.value, d.value as definitsioon FROM word w JOIN ...</div>
+                            </div>
+                        </div>
+                        <div class="example-query" onclick="setQuery(`SELECT w.value, d.value as definitsioon, ds.name as sonastik
+FROM word w
+JOIN lexeme l ON w.id = l.word_id
+JOIN definition def ON l.meaning_id = def.meaning_id
+JOIN dataset ds ON l.dataset_code = ds.code
+JOIN definition d ON l.meaning_id = d.meaning_id
+WHERE w.value = 'park' AND w.lang = 'est'
+GROUP BY w.id, d.id, ds.name;`)">
+                            <span class="example-query-num">4</span>
+                            <div class="example-query-text">
+                                <div class="example-query-desc">"park" tähendused koos sõnastiku nimega</div>
+                                <div class="example-query-sql">SELECT w.value, d.value, ds.name FROM word w JOIN ...</div>
+                            </div>
+                        </div>
+                        <div class="example-query" onclick="setQuery(`SELECT ds.name, COUNT(*) as lekseeme
+FROM lexeme l
+JOIN dataset ds ON l.dataset_code = ds.code
+GROUP BY ds.code;`)">
+                            <span class="example-query-num">5</span>
+                            <div class="example-query-text">
+                                <div class="example-query-desc">Mitu lekseemi on igas sõnastikus?</div>
+                                <div class="example-query-sql">SELECT ds.name, COUNT(*) FROM lexeme l JOIN dataset ds ...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Detailed Workflow Example -->
         <details class="collapsible-section">
@@ -1717,5 +2082,189 @@ words = open(<span class="string">"sonad.txt"</span>).readlines()
             <p>Eesti Keele Instituut — Andmete pärimise juhend</p>
         </footer>
     </div>
+
+    <script>
+        let db = null;
+
+        // Initialize SQL.js and create database
+        async function initDatabase() {
+            try {
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+
+                db = new SQL.Database();
+
+                // Create tables
+                db.run(`
+                    CREATE TABLE dataset (
+                        code VARCHAR(10) PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL
+                    );
+
+                    CREATE TABLE word (
+                        id INTEGER PRIMARY KEY,
+                        value VARCHAR(100) NOT NULL,
+                        lang CHAR(3) NOT NULL
+                    );
+
+                    CREATE TABLE meaning (
+                        id INTEGER PRIMARY KEY
+                    );
+
+                    CREATE TABLE definition (
+                        id INTEGER PRIMARY KEY,
+                        meaning_id INTEGER NOT NULL,
+                        value TEXT NOT NULL
+                    );
+
+                    CREATE TABLE lexeme (
+                        id INTEGER PRIMARY KEY,
+                        word_id INTEGER NOT NULL,
+                        meaning_id INTEGER NOT NULL,
+                        dataset_code VARCHAR(10) NOT NULL
+                    );
+                `);
+
+                // Insert data
+                db.run(`
+                    INSERT INTO dataset (code, name) VALUES
+                        ('eki', 'EKI ühendsõnastik 2025'),
+                        ('esterm', 'EKI terminibaas Esterm'),
+                        ('ety', 'Etümoloogia'),
+                        ('mes', 'Mesindusleksikon'),
+                        ('pur', 'Purjetamise terminibaas');
+
+                    INSERT INTO word (id, value, lang) VALUES
+                        (204593, 'mure', 'est'),
+                        (204594, 'mure', 'est'),
+                        (2181478, 'mure', 'fra'),
+                        (545367, 'mure', 'nds'),
+                        (213988, 'park', 'est'),
+                        (213989, 'park', 'est'),
+                        (213990, 'park', 'est'),
+                        (1354140, 'park', 'est'),
+                        (1759702, 'park', 'est'),
+                        (1376833, 'park', 'eng'),
+                        (1751877, 'park', 'eng');
+
+                    INSERT INTO meaning (id) VALUES
+                        (65787), (65788), (65789),
+                        (75897), (75899), (75900),
+                        (68406), (634685), (790192), (790195);
+
+                    INSERT INTO definition (id, meaning_id, value) VALUES
+                        (69556, 65787, 'rõhuv sisemine rahutus ja hirm'),
+                        (69557, 65787, 'lahendust vajav probleem'),
+                        (69558, 65788, 'teha olev asi (töö, toiming, kohustus vms)'),
+                        (69559, 65789, 'kergesti tükkideks lagunev'),
+                        (80583, 75897, 'suur haljasala jalutusteedega'),
+                        (80584, 75899, 'parkaine või selle lahus'),
+                        (80587, 75900, 'kolme- või enamamastiline kaugsõidupurjekas'),
+                        (72379, 68406, 'toornaha töötlemine parkainetega'),
+                        (426350, 634685, 'seadmete, masinate või sõidukite kogum'),
+                        (544710, 790192, 'loomanahkade parkimiseks kasutatav'),
+                        (544716, 790195, 'loomanaha kohta: pargitud');
+
+                    INSERT INTO lexeme (id, word_id, meaning_id, dataset_code) VALUES
+                        (1263246, 204593, 65787, 'eki'),
+                        (1263247, 204593, 65788, 'eki'),
+                        (1263257, 204594, 65789, 'eki'),
+                        (1286472, 213988, 75897, 'eki'),
+                        (1286476, 213989, 75899, 'eki'),
+                        (1286479, 213990, 75900, 'eki'),
+                        (2333318, 213989, 68406, 'eki'),
+                        (2453644, 1354140, 634685, 'esterm'),
+                        (2961812, 1759702, 790192, 'eki'),
+                        (2961818, 1759702, 790195, 'eki');
+                `);
+
+                // Run initial query
+                runQuery();
+
+            } catch (err) {
+                document.getElementById('sql-output').innerHTML =
+                    '<div class="sql-error">Viga andmebaasi laadimisel: ' + err.message + '</div>';
+            }
+        }
+
+        function runQuery() {
+            if (!db) {
+                document.getElementById('sql-output').innerHTML =
+                    '<div class="sql-loading">Andmebaas laeb...</div>';
+                return;
+            }
+
+            const query = document.getElementById('sql-editor').value.trim();
+            if (!query) return;
+
+            try {
+                const results = db.exec(query);
+
+                if (results.length === 0) {
+                    document.getElementById('sql-output').innerHTML =
+                        '<div style="padding: 1rem; color: #64748b;">Päring õnnestus, aga tulemusi pole.</div>';
+                    document.getElementById('results-count').textContent = '0 rida';
+                    return;
+                }
+
+                const result = results[0];
+                const columns = result.columns;
+                const values = result.values;
+
+                let html = '<div style="overflow-x: auto;"><table id="sql-results-table"><thead><tr>';
+                columns.forEach(col => {
+                    html += '<th>' + escapeHtml(col) + '</th>';
+                });
+                html += '</tr></thead><tbody>';
+
+                values.forEach(row => {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += '<td>' + escapeHtml(cell !== null ? cell : 'NULL') + '</td>';
+                    });
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table></div>';
+
+                document.getElementById('sql-output').innerHTML = html;
+                document.getElementById('results-count').textContent = values.length + ' rida';
+
+            } catch (err) {
+                document.getElementById('sql-output').innerHTML =
+                    '<div class="sql-error">Viga: ' + escapeHtml(err.message) + '</div>';
+                document.getElementById('results-count').textContent = 'Viga';
+            }
+        }
+
+        function setQuery(query) {
+            document.getElementById('sql-editor').value = query;
+            runQuery();
+        }
+
+        function showTable(tableName) {
+            setQuery('SELECT * FROM ' + tableName + ';');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Handle Ctrl+Enter to run query
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sql-editor').addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    runQuery();
+                }
+            });
+        });
+
+        // Initialize database when page loads
+        initDatabase();
+    </script>
 </body>
 </html>
