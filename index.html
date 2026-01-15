@@ -1274,6 +1274,79 @@
             gap: 0.75rem;
         }
 
+        /* Table Tabs */
+        .table-tabs-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .table-tabs-header {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 0;
+        }
+
+        .table-tab {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            cursor: pointer;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .table-tab:hover {
+            background: #e2e8f0;
+            color: var(--text-dark);
+        }
+
+        .table-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .table-tabs-content {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+            padding: 1rem;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .table-tabs-content table {
+            margin: 0;
+        }
+
+        .table-tab-panel {
+            display: none;
+        }
+
+        .table-tab-panel.active {
+            display: block;
+        }
+
+        .table-description {
+            background: #f0fdf4;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #047857;
+        }
+
+        .table-description code {
+            background: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+        }
+
         .example-query {
             background: var(--bg-light);
             border-radius: 0.5rem;
@@ -1545,14 +1618,51 @@
                     Proovi ise SQL päringuid teha!
                 </p>
 
-                <div class="sql-schema-info">
-                    <h4>Andmebaasi tabelid (kliki, et näha struktuuri):</h4>
-                    <div class="schema-tables">
-                        <span class="schema-table" onclick="showTable('word')">word</span>
-                        <span class="schema-table" onclick="showTable('meaning')">meaning</span>
-                        <span class="schema-table" onclick="showTable('definition')">definition</span>
-                        <span class="schema-table" onclick="showTable('lexeme')">lexeme</span>
-                        <span class="schema-table" onclick="showTable('dataset')">dataset</span>
+                <div class="table-tabs-container">
+                    <h4 style="color: var(--text-dark); margin-bottom: 1rem;">Tutvu andmetega (kliki tabelit):</h4>
+                    <div class="table-tabs-header">
+                        <button class="table-tab active" onclick="showTab('word')">word</button>
+                        <button class="table-tab" onclick="showTab('meaning')">meaning</button>
+                        <button class="table-tab" onclick="showTab('definition')">definition</button>
+                        <button class="table-tab" onclick="showTab('lexeme')">lexeme</button>
+                        <button class="table-tab" onclick="showTab('dataset')">dataset</button>
+                    </div>
+                    <div class="table-tabs-content">
+                        <div id="tab-word" class="table-tab-panel active">
+                            <div class="table-description">
+                                <strong>word</strong> — sõnad (keelendid). Üks sõna võib esineda mitu korda (homonüümid, eri keeled).
+                                Veerud: <code>id</code>, <code>value</code> (sõna), <code>lang</code> (keel).
+                            </div>
+                            <div id="table-content-word">Laeb...</div>
+                        </div>
+                        <div id="tab-meaning" class="table-tab-panel">
+                            <div class="table-description">
+                                <strong>meaning</strong> — tähendused. Siin näiteandmetes ainult ID-d, päris andmebaasis rohkem infot.
+                                Veerud: <code>id</code>.
+                            </div>
+                            <div id="table-content-meaning">Laeb...</div>
+                        </div>
+                        <div id="tab-definition" class="table-tab-panel">
+                            <div class="table-description">
+                                <strong>definition</strong> — definitsioonid ehk seletused. Seotud tähendusega (meaning_id).
+                                Veerud: <code>id</code>, <code>meaning_id</code>, <code>value</code> (seletus).
+                            </div>
+                            <div id="table-content-definition">Laeb...</div>
+                        </div>
+                        <div id="tab-lexeme" class="table-tab-panel">
+                            <div class="table-description">
+                                <strong>lexeme</strong> — lekseemid, mis seovad sõna tähendusega konkreetses sõnastikus.
+                                Veerud: <code>id</code>, <code>word_id</code>, <code>meaning_id</code>, <code>dataset_code</code>.
+                            </div>
+                            <div id="table-content-lexeme">Laeb...</div>
+                        </div>
+                        <div id="tab-dataset" class="table-tab-panel">
+                            <div class="table-description">
+                                <strong>dataset</strong> — sõnastikud/andmekogud.
+                                Veerud: <code>code</code> (lühend), <code>name</code> (täisnimi).
+                            </div>
+                            <div id="table-content-dataset">Laeb...</div>
+                        </div>
                     </div>
                 </div>
 
@@ -2179,6 +2289,9 @@ words = open(<span class="string">"sonad.txt"</span>).readlines()
                         (2961818, 1759702, 790195, 'eki');
                 `);
 
+                // Load all table contents for tabs
+                loadAllTableContents();
+
                 // Run initial query
                 runQuery();
 
@@ -2241,6 +2354,66 @@ words = open(<span class="string">"sonad.txt"</span>).readlines()
         function setQuery(query) {
             document.getElementById('sql-editor').value = query;
             runQuery();
+        }
+
+        function showTab(tableName) {
+            // Update tab buttons
+            document.querySelectorAll('.table-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.table-tab[onclick="showTab('${tableName}')"]`).classList.add('active');
+
+            // Update tab panels
+            document.querySelectorAll('.table-tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById('tab-' + tableName).classList.add('active');
+        }
+
+        function loadAllTableContents() {
+            if (!db) return;
+
+            const tables = ['word', 'meaning', 'definition', 'lexeme', 'dataset'];
+
+            tables.forEach(tableName => {
+                try {
+                    const results = db.exec('SELECT * FROM ' + tableName);
+                    const container = document.getElementById('table-content-' + tableName);
+
+                    if (results.length === 0) {
+                        container.innerHTML = '<div style="color: #64748b;">Tühi tabel</div>';
+                        return;
+                    }
+
+                    const result = results[0];
+                    const columns = result.columns;
+                    const values = result.values;
+
+                    let html = '<table id="sql-results-table"><thead><tr>';
+                    columns.forEach(col => {
+                        html += '<th>' + escapeHtml(col) + '</th>';
+                    });
+                    html += '</tr></thead><tbody>';
+
+                    values.forEach(row => {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            const cellText = cell !== null ? String(cell) : 'NULL';
+                            // Truncate long text for display
+                            const displayText = cellText.length > 60 ? cellText.substring(0, 57) + '...' : cellText;
+                            html += '<td title="' + escapeHtml(cellText) + '">' + escapeHtml(displayText) + '</td>';
+                        });
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table>';
+                    container.innerHTML = html;
+
+                } catch (err) {
+                    document.getElementById('table-content-' + tableName).innerHTML =
+                        '<div class="sql-error">Viga: ' + escapeHtml(err.message) + '</div>';
+                }
+            });
         }
 
         function showTable(tableName) {
