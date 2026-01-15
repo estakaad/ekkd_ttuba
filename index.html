@@ -1396,214 +1396,194 @@
 <body>
     <div class="container">
         <header>
-            <h1>Kuidas pärida sõnastikuandmeid?</h1>
-            <p>Vali õige meetod andmete kättesaamiseks</p>
+            <h1>Nii et sa tahad suurel keelemudelil lasta midagi keeleandmetega teha?</h1>
+            <p>Samm-sammuline juhend andmete kättesaamiseks</p>
         </header>
 
-        <!-- Problem Section -->
+        <!-- Intro Section -->
         <section class="problem-section">
-            <h2>🤔 Tuttav olukord?</h2>
-            <div class="scenario">
-                <p>„Tahan kasutada sõnastikuandmeid LLM-i treenimiseks või promptide koostamiseks. Aga kuidas ma need andmed kätte saan — kas kasutajaliidese kaudu, API-ga või otse andmebaasist?"</p>
-                <p class="question">Millist meetodit kasutada?</p>
-            </div>
-        </section>
-
-        <!-- Workflow Section -->
-        <section class="workflow-section">
             <h2>Tüüpiline töövoog</h2>
-            <div class="workflow-steps">
+            <div class="workflow-steps" style="background: white; border-radius: 0.75rem; padding: 1.5rem; margin-top: 1rem;">
                 <div class="workflow-step">
                     <div class="step-icon">🗄️</div>
-                    <div class="step-text">Päri andmed</div>
+                    <div class="step-text">1. Hangi sõnastikuandmed</div>
                 </div>
                 <span class="workflow-arrow">→</span>
                 <div class="workflow-step">
                     <div class="step-icon">📊</div>
-                    <div class="step-text">Ekspordi Excelisse</div>
+                    <div class="step-text">2. Rikasta korpuse andmetega</div>
                 </div>
                 <span class="workflow-arrow">→</span>
                 <div class="workflow-step">
                     <div class="step-icon">🤖</div>
-                    <div class="step-text">Kasuta LLM-iga</div>
+                    <div class="step-text">3. Kasuta LLM-iga</div>
                 </div>
             </div>
         </section>
 
-        <!-- Solutions Section - Collapsible -->
+        <!-- Step 1: Getting Data -->
         <details class="collapsible-section" open>
             <summary class="section-toggle">
                 <span class="toggle-icon">▼</span>
-                <h2>Kolm viisi andmete pärimiseks</h2>
+                <h2>1. samm: Hangi andmed ühendsõnastikust</h2>
             </summary>
+            <div class="collapsible-content">
+                <p class="workflow-intro">Kui soovid alustada EKI ühendsõnastiku andmetega, on kolm võimalust nende kättesaamiseks.</p>
 
-            <!-- Solution Cards -->
-            <div class="solutions-grid">
-            <!-- Database -->
-            <div class="solution-card">
-                <div class="solution-header database">
-                    <span class="icon">🗄️</span>
-                    <h3>Andmebaas</h3>
-                </div>
-                <div class="solution-body">
-                    <p class="tagline">„Tahan kätte saada palju andmeid korraga, keerukate filtritega"</p>
+                <!-- Solution Cards -->
+                <div class="solutions-grid">
+                    <!-- UI - Not recommended -->
+                    <div class="solution-card" style="opacity: 0.7;">
+                        <div class="solution-header ui">
+                            <span class="icon">🖥️</span>
+                            <h3>Kasutajaliides</h3>
+                        </div>
+                        <div class="solution-body">
+                            <p class="tagline">Sõnaveeb või Ekilex</p>
 
-                    <div class="db-note">
-                        Siin: <strong>Ekilexi andmebaas</strong> (PostgreSQL)
+                            <div class="best-for">
+                                <h4>✓ Plussid:</h4>
+                                <ul class="best-for-list">
+                                    <li>Ei vaja tehnilisi oskusi</li>
+                                    <li>Kiire järelevaatamine</li>
+                                    <li>Visuaalne ülevaade</li>
+                                </ul>
+                            </div>
+
+                            <div class="limits">
+                                <h4>✗ Miinused:</h4>
+                                <ul class="limits-list">
+                                    <li>Üks sõna korraga, käsitsi</li>
+                                    <li>Ei saa keerukaid filtreid kasutada</li>
+                                    <li>Ei saa andmeid eksportida</li>
+                                    <li>Aeganõudev suurte koguste puhul</li>
+                                </ul>
+                            </div>
+
+                            <div class="output-box ui-output">
+                                <span>❌ <strong>Kokkuvõte:</strong> Ei sobi selleks ülesandeks</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="use-case">
-                        <h4>📋 Näide:</h4>
-                        <p>Anna mulle kõik sõnad, mis on märgendiga „vananenud" ja sõnaliigiga „nimisõna".</p>
+                    <!-- API - Not recommended -->
+                    <div class="solution-card" style="opacity: 0.7;">
+                        <div class="solution-header api">
+                            <span class="icon">🔌</span>
+                            <h3>API</h3>
+                        </div>
+                        <div class="solution-body">
+                            <p class="tagline">Ekilexi API</p>
+
+                            <div class="best-for">
+                                <h4>✓ Plussid:</h4>
+                                <ul class="best-for-list">
+                                    <li>Reaalajas andmed</li>
+                                    <li>Automatiseeritav skriptiga</li>
+                                    <li>Rakenduste integratsioon</li>
+                                </ul>
+                            </div>
+
+                            <div class="limits">
+                                <h4>✗ Miinused:</h4>
+                                <ul class="limits-list">
+                                    <li>Üks sõna korraga</li>
+                                    <li>Piiratud filtreerimisvõimalused</li>
+                                    <li>Tuhandete sõnade pärimine aeglane</li>
+                                </ul>
+                            </div>
+
+                            <div class="output-box api-output">
+                                <span>❌ <strong>Kokkuvõte:</strong> Ei sobi selleks ülesandeks</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="example-box">
-                        <code><span class="comment">-- Kõik vananenud nimisõnad</span>
-<span class="keyword">SELECT</span> headword, definition
-<span class="keyword">FROM</span> entries
-<span class="keyword">WHERE</span> label = <span class="string">'vananenud'</span>
-<span class="keyword">AND</span> pos = <span class="string">'S'</span>;
+                    <!-- Database - Recommended -->
+                    <div class="solution-card" style="border: 3px solid var(--accent);">
+                        <div class="solution-header database">
+                            <span class="icon">🗄️</span>
+                            <h3>Andmebaas</h3>
+                        </div>
+                        <div class="solution-body">
+                            <p class="tagline">Ekilexi PostgreSQL andmebaas</p>
 
-<span class="comment">-- Tulemus: 847 rida → eksport CSV</span></code>
-                    </div>
+                            <div class="best-for">
+                                <h4>✓ Plussid:</h4>
+                                <ul class="best-for-list">
+                                    <li>Hulgieksport (sadu-tuhandeid sõnu)</li>
+                                    <li>Keerukad filtrid ja kombinatsioonid</li>
+                                    <li>Kõik andmed kättesaadavad</li>
+                                    <li>Eksport CSV/Excelisse</li>
+                                </ul>
+                            </div>
 
-                    <div class="output-box">
-                        <span>📥 <strong>Väljund:</strong> CSV/Excel tuhandete ridadega</span>
-                    </div>
+                            <div class="limits">
+                                <h4>✗ Miinused:</h4>
+                                <ul class="limits-list">
+                                    <li>Vajab SQL-i oskust</li>
+                                    <li>Vajab ligipääsu (piiratud)</li>
+                                    <li>Pole reaalajas andmed</li>
+                                </ul>
+                            </div>
 
-                    <div class="best-for">
-                        <h4>✓ Sobib hästi:</h4>
-                        <ul class="best-for-list">
-                            <li>Hulgieksport (sadu-tuhandeid sõnu)</li>
-                            <li>Keerukad filtrid ja kombinatsioonid</li>
-                            <li>Statistilised päringud</li>
-                            <li>Andmete ettevalmistamine LLM-ile</li>
-                        </ul>
-                    </div>
-
-                    <div class="limits">
-                        <h4>✗ Piirangud:</h4>
-                        <ul class="limits-list">
-                            <li>Vajab SQL-i oskust või abi arendajalt</li>
-                            <li>Pole reaalajas (tuleb eksportida)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- API -->
-            <div class="solution-card">
-                <div class="solution-header api">
-                    <span class="icon">🔌</span>
-                    <h3>API</h3>
-                </div>
-                <div class="solution-body">
-                    <p class="tagline">„Tahan teada, mida tähendab konkreetne sõna X"</p>
-
-                    <div class="api-note">
-                        Siin: <strong>Ekilexi API</strong>, <strong>Sketch Engine'i API</strong>
-                    </div>
-
-                    <div class="use-case api-case">
-                        <h4>📋 Näide:</h4>
-                        <p>Mis on sõna „ilmutama" definitsioon ja näitelaused?</p>
-                    </div>
-
-                    <div class="example-box">
-                        <code><span class="keyword">GET</span> /api/entries/ilmutama
-
-{
-  <span class="property">"headword"</span>: <span class="string">"ilmutama"</span>,
-  <span class="property">"pos"</span>: <span class="string">"tegusõna"</span>,
-  <span class="property">"definitions"</span>: [
-    <span class="string">"nähtavale tooma"</span>,
-    <span class="string">"avaldama, väljendama"</span>
-  ],
-  <span class="property">"examples"</span>: [...]
-}</code>
-                    </div>
-
-                    <div class="output-box api-output">
-                        <span>📥 <strong>Väljund:</strong> JSON ühe sõna kohta</span>
-                    </div>
-
-                    <div class="best-for">
-                        <h4>✓ Sobib hästi:</h4>
-                        <ul class="best-for-list">
-                            <li>Üksiku sõna tähenduse pärimine</li>
-                            <li>Rakenduste ja skriptide integratsioon</li>
-                            <li>Automaatne pärimine (nt tsüklis)</li>
-                            <li>Reaalajas andmed</li>
-                        </ul>
-                    </div>
-
-                    <div class="limits">
-                        <h4>✗ Piirangud:</h4>
-                        <ul class="limits-list">
-                            <li>Üks sõna korraga (pole hulgieksporti)</li>
-                            <li>Piiratud filtreerimisvõimalused</li>
-                        </ul>
+                            <div class="output-box">
+                                <span>✅ <strong>Kokkuvõte:</strong> Kõige mõttekam valik!</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- UI -->
-            <div class="solution-card">
-                <div class="solution-header ui">
-                    <span class="icon">🖥️</span>
-                    <h3>Kasutajaliides</h3>
+                <!-- Database Details -->
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--accent);">
+                    <div class="step-header">
+                        <h3>Kuidas andmebaasile ligi pääseda?</h3>
+                    </div>
+
+                    <div class="step-task">
+                        <p><strong>Ekilex kasutab PostgreSQL andmebaasi.</strong> Selle kasutamiseks vajad:</p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-muted);">
+                            <li>PostgreSQL andmebaasimootor (installitud)</li>
+                            <li>Andmebaasi vaatamise programm (nt <strong>DBeaver</strong>)</li>
+                            <li>Ligipääs backup-failidele</li>
+                        </ul>
+                    </div>
+
+                    <div class="tools-limitation" style="margin: 1rem 0;">
+                        <span class="limitation-icon">⚠️</span>
+                        <div>
+                            <strong>Oluline:</strong> Andmebaasis ei ole reaalajas andmed! Meil ei ole ligipääsu toodangu andmebaasile —
+                            sellele seisule, mis on praegusel hetkel Ekilexis. Iga öö tehakse backup, nii et <strong>eilsetele andmetele on ligipääs</strong>.
+                        </div>
+                    </div>
+
+                    <div class="tools-limitation" style="margin: 1rem 0; background: #fef2f2; border-color: #fecaca;">
+                        <span class="limitation-icon">🔒</span>
+                        <div>
+                            <strong>Ligipääs on piiratud.</strong> Backup-faili saamisel laed alla ~15 GB faili, mille pead käsureal
+                            käivitama. Seejärel saad selle avada DBeaveris. Hetkel on väga piiratud inimestel ligipääs nendele backupidele
+                            ja see peab olema hästi põhjendatud.
+                        </div>
+                    </div>
                 </div>
-                <div class="solution-body">
-                    <p class="tagline">„Tahan kiiresti üht sõna järele vaadata"</p>
 
-                    <div class="ui-note">
-                        Siin: <strong>Sõnaveeb</strong>, <strong>Ekilex</strong>, <strong>Sketch Engine</strong>
+                <!-- Database Structure -->
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--primary);">
+                    <div class="step-header">
+                        <h3>Andmebaasi struktuur</h3>
                     </div>
 
-                    <div class="use-case ui-case">
-                        <h4>📋 Näide:</h4>
-                        <p>Vaatan brauseris, kuidas on kirjeldatud sõna „päike".</p>
+                    <div class="step-task">
+                        <p>Andmebaasis on palju tabeleid, mis on omavahel seotud. Andmete kättesaamiseks tuleb teha <strong>SQL päring</strong>,
+                        milles spetsifitseerid, mida sa näha tahad ja mis tingimused sa sead.</p>
                     </div>
 
-                    <div class="example-box">
-                        <code>┌─────────────────────────────┐
-│ 🔍 päike             [Otsi] │
-├─────────────────────────────┤
-│ <span class="keyword">päike</span>  <span class="string">nimisõna</span>             │
-│                             │
-│ Maad ja teisi planeete      │
-│ valgustav ja soojendav      │
-│ taevakeha                   │
-│                             │
-│ „Päike tõuseb idast."       │
-└─────────────────────────────┘</code>
-                    </div>
-
-                    <div class="output-box ui-output">
-                        <span>📥 <strong>Väljund:</strong> Ekraanipilt või copy-paste</span>
-                    </div>
-
-                    <div class="best-for">
-                        <h4>✓ Sobib hästi:</h4>
-                        <ul class="best-for-list">
-                            <li>Kiire järelevaatamine</li>
-                            <li>Visuaalne ülevaade</li>
-                            <li>Ei vaja tehnilisi oskusi</li>
-                        </ul>
-                    </div>
-
-                    <div class="limits">
-                        <h4>✗ Piirangud:</h4>
-                        <ul class="limits-list">
-                            <li>Üks sõna korraga, käsitsi</li>
-                            <li>Ei saa keerukaid filtreid kasutada</li>
-                            <li>Ei saa andmeid eksportida</li>
-                            <li>Aeganõudev suurte koguste puhul</li>
-                        </ul>
+                    <div class="scripting-note" style="margin: 1rem 0;">
+                        <strong>Kuidas AI siin aidata saab?</strong> Kirjelda, mida tahad, ja lase AI-l päring kirjutada. Näiteks:<br><br>
+                        <em>„Mul on tabelid word, lexeme, meaning. Anna kõik sõnad, millel on lexeme datasetis 'eki' ja millel on olemas seletus, mille tüüp on definition."</em>
                     </div>
                 </div>
             </div>
-        </div>
         </details>
 
         <!-- Interactive SQL Section -->
@@ -1742,6 +1722,67 @@ GROUP BY ds.code;`)">
                 </div>
             </div>
         </section>
+
+        <!-- Step 2: Corpus Enrichment -->
+        <details class="collapsible-section">
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>2. samm: Rikasta korpuse andmetega</h2>
+            </summary>
+            <div class="collapsible-content">
+                <p class="workflow-intro">
+                    Kui on olemas ühendsõnastiku andmed, võib olla soov neid rikastada korpuse andmetega —
+                    näiteks lisada igale sõnale näitelauseid, kuidas seda päriselt kasutatakse.
+                </p>
+
+                <div class="tools-limitation" style="margin: 1rem 0;">
+                    <span class="limitation-icon">⚠️</span>
+                    <div>
+                        <strong>Korpuse andmeid ei ole meil andmebaasist võtta.</strong>
+                        Neid saab pärida <strong>Sketch Engine'i API</strong> kaudu — sest ükshaaval kasutajaliidesest vaatamine oleks väga aeganõudev.
+                    </div>
+                </div>
+
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--primary);">
+                    <div class="step-header">
+                        <h3>Sketch Engine'i API</h3>
+                        <span class="answer-badge api">🔌 API</span>
+                    </div>
+
+                    <div class="step-task">
+                        <p>Sketch Engine'i API on küll keeruline, aga võimaldab pärida:</p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-muted);">
+                            <li><strong>Konkordantsid</strong> — näitelaused, kus sõna esineb</li>
+                            <li><strong>Kollokatsioonid</strong> — milliste sõnadega koos esineb</li>
+                            <li><strong>Sagedusandmed</strong> — kui tihti sõna esineb</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <code><span class="comment"># Pythoni skript: küsin iga sõna kohta näitelaused</span>
+<span class="keyword">for</span> word <span class="keyword">in</span> words_list:
+    response = requests.get(
+        <span class="string">"https://api.sketchengine.eu/concordance"</span>,
+        params={<span class="string">"q"</span>: word, <span class="string">"corpus"</span>: <span class="string">"ettenten"</span>}
+    )
+    concordances[word] = response.json()
+
+<span class="comment"># Tulemus: iga sõna kohta 10-20 näitelauset</span></code>
+                    </div>
+
+                    <div class="scripting-note" style="margin: 1rem 0;">
+                        <strong>Hulkpäringuteks on vaja skripti.</strong> API-ga saab korraga küsida ühe sõna kohta.
+                        Kui sul on 2000 sõna, peab skript tegema 2000 päringut. Käsitsi seda teha ei jõua.
+                    </div>
+
+                    <div class="tool-card" style="margin-top: 1rem;">
+                        <h4>Sketch Engine API dokumentatsioon</h4>
+                        <p>API võimalused ja näited.</p>
+                        <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">API dokumentatsioon →</a>
+                    </div>
+                </div>
+            </div>
+        </details>
 
         <!-- Detailed Workflow Example -->
         <details class="collapsible-section">
@@ -1918,271 +1959,6 @@ GROUP BY ds.code;`)">
                         <span class="answer-badge api">🔌 Samm 3</span>
                         <p><strong>API</strong>, sest pean töötlema <em>tuhandeid kirjeid</em> LLM-iga <em>automaatselt</em></p>
                     </div>
-                </div>
-            </div>
-            </div>
-        </details>
-
-        <!-- Scenarios Section -->
-        <details class="collapsible-section">
-            <summary class="section-toggle">
-                <span class="toggle-icon">▼</span>
-                <h2>🎯 Kiired näited</h2>
-            </summary>
-            <div class="collapsible-content scenarios-content">
-            <p class="section-intro">Millist viisi kasutada erinevates olukordades?</p>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">1</span>
-                    <span class="text">„Vajan kõiki sõnu, mille definitsioon sisaldab sõna <em>vesi</em>."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge db">🗄️ Andmebaas</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">2</span>
-                    <span class="text">„Mis tähendab sõna <em>kihistuma</em>?"</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge api">🔌 API</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">3</span>
-                    <span class="text">„Tahan kiiresti kontrollida, kas sõna <em>nutitelefon</em> on sõnastikus."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge ui">🖥️ Kasutajaliides</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">4</span>
-                    <span class="text">„Vajan kõiki murdekeelseid sõnu Excelisse."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge db">🗄️ Andmebaas</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">5</span>
-                    <span class="text">„Kirjutan skripti, mis küsib LLM-ilt iga sõna kohta sünonüüme."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge api">🔌 API</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">6</span>
-                    <span class="text">„Mitu sõna on sõnastikus sõnaliigi kaupa?"</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge db">🗄️ Andmebaas</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">7</span>
-                    <span class="text">„Tahan oma rakenduses näidata sõna definitsiooni."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge api">🔌 API</span>
-                </div>
-            </div>
-
-            <div class="scenario-item">
-                <div class="scenario-problem">
-                    <span class="number">8</span>
-                    <span class="text">„Tahan näha, millised näitelaused on sõnal <em>raamat</em>."</span>
-                </div>
-                <div class="scenario-answer">
-                    <span class="answer-badge ui">🖥️ Kasutajaliides</span>
-                </div>
-            </div>
-            </div>
-        </details>
-
-        <!-- API Tools Section -->
-        <details class="collapsible-section">
-            <summary class="section-toggle">
-                <span class="toggle-icon">▼</span>
-                <h2>🔧 API testimise tööriistad</h2>
-            </summary>
-            <div class="collapsible-content tools-content">
-            <p class="section-intro">API-sid saab proovida ka ilma programmeerimata — aga ainult üks päring korraga.</p>
-
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <h4>Postman</h4>
-                    <p>Universaalne tööriist API-de testimiseks. Saad saata päringuid ja näha vastuseid mugavas liideses.</p>
-                    <a href="https://www.postman.com/" target="_blank" class="tool-link">postman.com →</a>
-                </div>
-                <div class="tool-card">
-                    <h4>Sketch Engine API</h4>
-                    <p>Sketch Engine'i enda API dokumentatsioon ja testimiskeskkond.</p>
-                    <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">API dokumentatsioon →</a>
-                </div>
-                <div class="tool-card">
-                    <h4>Ekilexi API</h4>
-                    <p>EKI sõnastikuandmete programmiline pärimine.</p>
-                    <a href="https://ekilex.ee/api" target="_blank" class="tool-link">Ekilexi API →</a>
-                </div>
-            </div>
-
-            <div class="tools-limitation">
-                <span class="limitation-icon">⚠️</span>
-                <div>
-                    <strong>Piirang:</strong> Nende tööriistadega saab teha ainult üksikpäringuid — üks sõna korraga.
-                    Kui vaja pärida sadu või tuhandeid sõnu, tuleb kirjutada skript.
-                </div>
-            </div>
-            </div>
-        </details>
-
-        <!-- Scripting Section -->
-        <details class="collapsible-section">
-            <summary class="section-toggle">
-                <span class="toggle-icon">▼</span>
-                <h2>🐍 Hulkpäringuteks on vaja skripti</h2>
-            </summary>
-            <div class="collapsible-content scripting-content">
-            <p class="section-intro">Kui tahad API-ga pärida rohkem kui paar sõna, pead kirjutama programmi, mis teeb päringuid sinu eest.</p>
-
-            <div class="scripting-grid">
-                <div class="scripting-why">
-                    <h4>Miks skript?</h4>
-                    <ul>
-                        <li><strong>Automatiseerimine:</strong> Skript küsib 1000 sõna eest — sina ei pea</li>
-                        <li><strong>Kiirus:</strong> Programm teeb sekundis kümneid päringuid</li>
-                        <li><strong>Töötlus:</strong> Vastused saab kohe faili salvestada või edasi töödelda</li>
-                        <li><strong>Korratavus:</strong> Sama skripti saab uuesti käivitada uute andmetega</li>
-                    </ul>
-                </div>
-                <div class="scripting-example">
-                    <h4>Näide: Pythoni skript</h4>
-                    <div class="example-box">
-                        <code><span class="keyword">import</span> requests
-<span class="keyword">import</span> csv
-
-<span class="comment"># Loen sõnad failist</span>
-words = open(<span class="string">"sonad.txt"</span>).readlines()
-
-<span class="comment"># Küsin iga sõna kohta</span>
-<span class="keyword">for</span> word <span class="keyword">in</span> words:
-    resp = requests.get(
-        <span class="string">f"https://api.ekilex.ee/word/{word}"</span>
-    )
-    <span class="comment"># Salvestan tulemuse...</span></code>
-                    </div>
-                </div>
-            </div>
-
-            <div class="scripting-note">
-                <strong>Ei oska programmeerida?</strong> Küsi abi arendajalt või kasuta LLM-i (nt Claude, ChatGPT), et skript kirjutada.
-                Piisab kui kirjeldad, mida tahad teha.
-            </div>
-            </div>
-        </details>
-
-        <!-- Quick Reference -->
-        <details class="collapsible-section">
-            <summary class="section-toggle">
-                <span class="toggle-icon">▼</span>
-                <h2>📊 Kiire võrdlus</h2>
-            </summary>
-            <div class="collapsible-content table-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Küsimus</th>
-                        <th><span class="badge badge-db">Andmebaas</span></th>
-                        <th><span class="badge badge-api">API</span></th>
-                        <th><span class="badge badge-ui">Kasutajaliides</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Mida küsida?</strong></td>
-                        <td>Kõik sõnad, mis vastavad tingimusele X</td>
-                        <td>Mida tähendab sõna X?</td>
-                        <td>Vaatan sõna X</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Kui palju andmeid?</strong></td>
-                        <td>Sadu kuni tuhandeid</td>
-                        <td>Üks korraga (automatiseeritav)</td>
-                        <td>Üks korraga (käsitsi)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Filtreerimine?</strong></td>
-                        <td>Väga paindlik (SQL)</td>
-                        <td>Piiratud (API parameetrid)</td>
-                        <td>Lihtne otsing</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Väljund?</strong></td>
-                        <td>CSV, Excel, JSON</td>
-                        <td>JSON</td>
-                        <td>Ekraanil (copy-paste)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tehniline oskus?</strong></td>
-                        <td>SQL või arendaja abi</td>
-                        <td>Minimaalne programmeerimine</td>
-                        <td>Pole vaja</td>
-                    </tr>
-                    <tr>
-                        <td><strong>LLM-i jaoks?</strong></td>
-                        <td>Treeningandmed, hulgianalüüs</td>
-                        <td>Prompti rikastamine</td>
-                        <td>Käsitsi kopeerimine</td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-        </details>
-
-        <!-- Flow Section -->
-        <details class="collapsible-section">
-            <summary class="section-toggle">
-                <span class="toggle-icon">▼</span>
-                <h2>🔗 Kuidas need omavahel seotud on?</h2>
-            </summary>
-            <div class="collapsible-content flow-content">
-            <p>Andmed liiguvad läbi kihtide — igaüks pakub erinevat juurdepääsu</p>
-
-            <div class="architecture-flow">
-                <span class="flow-item db">🗄️ Andmebaas</span>
-                <span class="flow-arrow">→</span>
-                <span class="flow-item api">🔌 API</span>
-                <span class="flow-arrow">→</span>
-                <span class="flow-item ui">🖥️ Kasutajaliides</span>
-            </div>
-
-            <div class="flow-description">
-                <div class="flow-desc-item">
-                    <h4>Kõik andmed</h4>
-                    <p>Täielik juurdepääs, keerukad päringud, hulgieksport.</p>
-                </div>
-                <div class="flow-desc-item">
-                    <h4>Struktureeritud juurdepääs</h4>
-                    <p>Programmide jaoks, üks kirje korraga, reaalajas.</p>
-                </div>
-                <div class="flow-desc-item">
-                    <h4>Inimloetav vaade</h4>
-                    <p>Visuaalne, mugav sirvimiseks, piiratud filtrid.</p>
                 </div>
             </div>
             </div>
