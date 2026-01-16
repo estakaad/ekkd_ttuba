@@ -1732,7 +1732,7 @@ GROUP BY ds.code;`)">
             <div class="collapsible-content">
                 <p class="workflow-intro">
                     Kui on olemas ühendsõnastiku andmed, võib olla soov neid rikastada korpuse andmetega —
-                    näiteks lisada igale sõnale näitelauseid, kuidas seda päriselt kasutatakse.
+                    näiteks lisada igale sõnale sagedusandmeid või näitelauseid.
                 </p>
 
                 <div class="tools-limitation" style="margin: 1rem 0;">
@@ -1750,34 +1750,67 @@ GROUP BY ds.code;`)">
                     </div>
 
                     <div class="step-task">
-                        <p>Sketch Engine'i API on küll keeruline, aga võimaldab pärida:</p>
+                        <p>Sketch Engine'i API võimaldab pärida:</p>
                         <ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-muted);">
+                            <li><strong>Sagedusandmed</strong> — mitu korda sõna korpuses esineb</li>
+                            <li><strong>Žanrite jaotus</strong> — kui palju esineb ajakirjanduses, ilukirjanduses jne</li>
                             <li><strong>Konkordantsid</strong> — näitelaused, kus sõna esineb</li>
                             <li><strong>Kollokatsioonid</strong> — milliste sõnadega koos esineb</li>
-                            <li><strong>Sagedusandmed</strong> — kui tihti sõna esineb</li>
                         </ul>
                     </div>
 
-                    <div class="example-box">
-                        <code><span class="comment"># Pythoni skript: küsin iga sõna kohta näitelaused</span>
-<span class="keyword">for</span> word <span class="keyword">in</span> words_list:
-    response = requests.get(
-        <span class="string">"https://api.sketchengine.eu/concordance"</span>,
-        params={<span class="string">"q"</span>: word, <span class="string">"corpus"</span>: <span class="string">"ettenten"</span>}
-    )
-    concordances[word] = response.json()
+                    <div class="tools-limitation" style="margin: 1rem 0; background: #fef2f2; border-color: #fecaca;">
+                        <span class="limitation-icon">🔧</span>
+                        <div>
+                            <strong>API on keeruline!</strong> Erinevad andmed nõuavad erinevaid endpointe ja päringusüntaks on spetsiifiline (CQL).
+                            API reeglid erinevad kasutajaliidesest, seega <strong>numbrid ei pruugi täpselt ühtida</strong> sellega, mida UI-s näed.
+                        </div>
+                    </div>
 
-<span class="comment"># Tulemus: iga sõna kohta 10-20 näitelauset</span></code>
+                    <div class="example-box">
+                        <code><span class="comment"># Näide: sõna sageduse ja žanrite jaotuse pärimine</span>
+<span class="keyword">import</span> requests
+
+<span class="comment"># 1. Sõna kogusagedus (wordlist endpoint)</span>
+url = <span class="string">'https://api.sketchengine.eu/bonito/run.cgi/wordlist'</span>
+params = {
+    <span class="string">'corpname'</span>: <span class="string">'preloaded/estonian_nc23'</span>,
+    <span class="string">'wlattr'</span>: <span class="string">'lemma'</span>,         <span class="comment"># otsi lemma järgi</span>
+    <span class="string">'wlpat'</span>: <span class="string">'mure'</span>,          <span class="comment"># otsitav sõna</span>
+    <span class="string">'format'</span>: <span class="string">'json'</span>
+}
+response = requests.get(url, params=params,
+                        auth=(username, api_key))
+
+<span class="comment"># 2. Žanrite jaotus (freqs endpoint, erinev süntaks!)</span>
+url = <span class="string">'https://api.sketchengine.eu/bonito/run.cgi/freqs'</span>
+params = {
+    <span class="string">'corpname'</span>: <span class="string">'preloaded/estonian_nc23'</span>,
+    <span class="string">'q'</span>: <span class="string">'q[lemma="mure"]'</span>,  <span class="comment"># CQL süntaks!</span>
+    <span class="string">'fcrit'</span>: <span class="string">'doc.genre 0'</span>,  <span class="comment"># grupeeri žanri järgi</span>
+    <span class="string">'format'</span>: <span class="string">'json'</span>
+}</code>
+                    </div>
+
+                    <div class="step-task" style="margin-top: 1rem;">
+                        <p><strong>Mida see skript toodab?</strong></p>
+                        <div class="example-box" style="background: #f0fdf4;">
+                            <code style="color: #047857;"><span class="comment"># Tulemus Excelis:</span>
+märksõna | kogusagedus | suhteline_sagedus | ajakirjandus | ilukirjandus | ...
+---------|-------------|-------------------|--------------|--------------|----
+mure     | 45231       | 12.4              | 18420        | 8901         | ...
+park     | 28104       | 7.7               | 12033        | 5621         | ...</code>
+                        </div>
                     </div>
 
                     <div class="scripting-note" style="margin: 1rem 0;">
-                        <strong>Hulkpäringuteks on vaja skripti.</strong> API-ga saab korraga küsida ühe sõna kohta.
-                        Kui sul on 2000 sõna, peab skript tegema 2000 päringut. Käsitsi seda teha ei jõua.
+                        <strong>Hulkpäringuteks on vaja skripti.</strong> Kui sul on 2000 sõna, peab skript tegema iga sõna kohta
+                        mitu API-kutset (sagedus + žanrid + konkordantsid...). See võtab aega ja nõuab vigade käsitlemist.
                     </div>
 
                     <div class="tool-card" style="margin-top: 1rem;">
                         <h4>Sketch Engine API dokumentatsioon</h4>
-                        <p>API võimalused ja näited.</p>
+                        <p>API võimalused, endpoindid ja CQL süntaks.</p>
                         <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">API dokumentatsioon →</a>
                     </div>
                 </div>
