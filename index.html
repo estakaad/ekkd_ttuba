@@ -1896,6 +1896,59 @@ Kirjuta päring: anna kõik eestikeelsed sõnad datasetist
                             Mida rohkem konteksti annad, seda täpsema päringu saad.
                         </div>
                     </div>
+
+                    <!-- Data Model Reference -->
+                    <details style="margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                        <summary style="padding: 1rem; cursor: pointer; font-weight: 600; color: #047857;">
+                            📄 Näidisfail: Ekilexi andmemudeli kirjeldus (kliki, et näha)
+                        </summary>
+                        <div style="padding: 0 1rem 1rem 1rem;">
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                                See fail kirjeldab Ekilexi andmebaasi struktuuri. Kopeeri see SKM-ile enne SQL päringute küsimist.
+                            </p>
+                            <div class="example-box" style="max-height: 300px; overflow-y: auto; font-size: 0.8rem;">
+                                <code><span class="comment"># Ekilex Database Model Reference</span>
+
+<span class="keyword">Põhihierarhia:</span>
+WORD → LEXEME → MEANING → DEFINITION
+
+<span class="keyword">Põhitabelid:</span>
+
+<span class="string">word</span> (id, value, lang, homonym_nr, is_public)
+  → Sõnavormid (nt "koer", "maja")
+
+<span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code, level1, level2)
+  → Seob sõna tähendusega kindlas sõnastikus
+
+<span class="string">meaning</span> (id)
+  → Semantiline mõiste
+
+<span class="string">definition</span> (id, meaning_id, value, lang, definition_type_code)
+  → Tähenduse selgitus
+
+<span class="string">dataset</span> (code, name, is_public)
+  → Sõnastik/andmekogu (nt 'eki', 'ss1', 'psv')
+
+<span class="keyword">Klassifikaatorid:</span>
+<span class="string">lexeme_pos</span> (lexeme_id, pos_code) → Sõnaliik
+<span class="string">lexeme_register</span> (lexeme_id, register_code) → Register (kõnek, van)
+<span class="string">meaning_domain</span> (meaning_id, domain_code) → Valdkond
+
+<span class="keyword">Näitepäring:</span>
+<span class="keyword">SELECT</span> w.value, d.value <span class="keyword">AS</span> definition
+<span class="keyword">FROM</span> word w
+<span class="keyword">JOIN</span> lexeme l <span class="keyword">ON</span> l.word_id = w.id
+<span class="keyword">JOIN</span> definition d <span class="keyword">ON</span> d.meaning_id = l.meaning_id
+<span class="keyword">WHERE</span> w.value = <span class="string">'koer'</span>
+  <span class="keyword">AND</span> l.dataset_code = <span class="string">'eki'</span>;</code>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <a href="DATABASE_MODEL.md" target="_blank" class="tool-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; padding: 0.5rem 1rem; border-radius: 0.25rem; border: 1px solid #bbf7d0;">
+                                    📥 Laadi alla täisversioon (DATABASE_MODEL.md)
+                                </a>
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--primary);">
