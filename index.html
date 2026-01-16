@@ -1808,10 +1808,128 @@ park     | 28104       | 7.7               | 12033        | 5621         | ...</
                         mitu API-kutset (sagedus + žanrid + konkordantsid...). See võtab aega ja nõuab vigade käsitlemist.
                     </div>
 
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                        <div class="tool-card">
+                            <h4>API dokumentatsioon</h4>
+                            <p>Üldine ülevaade API võimalustest.</p>
+                            <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">Dokumentatsioon →</a>
+                        </div>
+                        <div class="tool-card">
+                            <h4>API tehniline kirjeldus</h4>
+                            <p>Endpoindid, parameetrid, näited.</p>
+                            <a href="https://www.sketchengine.eu/apidoc/" target="_blank" class="tool-link">apidoc →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Using LLMs to help -->
+        <details class="collapsible-section" open>
+            <summary class="section-toggle">
+                <span class="toggle-icon">▼</span>
+                <h2>🤖 Skriptide kirjutamisel aita LLM</h2>
+            </summary>
+            <div class="collapsible-content">
+                <p class="workflow-intro">
+                    Ükskõik kas valid andmebaasi või API — ilmselt ei pääse sa sellest, et pead kirjutama mingi skripti.
+                    Skript on vajalik, et ületada lõhe: sul on andmed käes, aga need tuleb kuidagi LLM-ile sööta.
+                </p>
+
+                <div class="workflow-step-detail" style="border-left-color: var(--secondary);">
+                    <div class="step-header">
+                        <h3>LLM aitab skripti kirjutada</h3>
+                    </div>
+
+                    <div class="step-task">
+                        <p>Sa ei pea ise programmeerima oskama. Kirjelda LLM-ile, mida tahad teha:</p>
+                    </div>
+
+                    <div class="example-box" style="background: #f5f3ff;">
+                        <code style="color: #5b21b6;"><span class="comment"># Näide promptist skripti tellimiseks:</span>
+
+Kirjuta mulle Pythoni skript, mis teeb järgmist:
+
+1. Võta sõnad failist <span class="string">sisend.csv</span> (veerg "märksõna")
+2. Iga sõna kohta küsi Claude'i API-lt:
+   <span class="string">"Kas sõna [X] on kõnekeelne? Vasta ainult: jah/ei/ebaselge"</span>
+3. Salvesta vastus uude veergu nimega <span class="string">"register_hinnang"</span>
+4. Salvesta tulemus uue failina <span class="string">tulemus.csv</span>
+5. Lisa 1-sekundiline paus päringute vahele</code>
+                    </div>
+
+                    <div class="scripting-note" style="margin: 1rem 0;">
+                        <strong>Mida täpsemalt kirjeldad, seda parema skripti saad.</strong>
+                        Maini failinimesid, veergude nimesid, väljundi formaati, pauside vajadust jne.
+                    </div>
+                </div>
+
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--accent);">
+                    <div class="step-header">
+                        <h3>SQL päringute kirjutamisel — tutvusta andmemudelit</h3>
+                    </div>
+
+                    <div class="step-task">
+                        <p>Et LLM annaks targemaid SQL päringuid, pead talle enne andmebaasi struktuuri tutvustama:</p>
+                    </div>
+
+                    <div class="example-box" style="background: #f0fdf4;">
+                        <code style="color: #047857;"><span class="comment"># Näide promptist SQL päringu tellimiseks:</span>
+
+Mul on Ekilexi andmebaas järgmiste tabelitega:
+
+- <span class="string">word</span> (id, value, lang) — sõnad
+- <span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code)
+- <span class="string">meaning</span> (id)
+- <span class="string">definition</span> (id, meaning_id, value)
+- <span class="string">dataset</span> (code, name) — sõnastikud
+
+Kirjuta päring: anna kõik eestikeelsed sõnad datasetist
+"eki", millel on olemas definitsioon.</code>
+                    </div>
+
+                    <div class="tools-limitation" style="margin: 1rem 0;">
+                        <span class="limitation-icon">💡</span>
+                        <div>
+                            <strong>Vihje:</strong> Kopeeri LLM-ile tabelite struktuur (CREATE TABLE laused) või näidisandmed.
+                            Mida rohkem konteksti annad, seda täpsema päringu saad.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--primary);">
+                    <div class="step-header">
+                        <h3>Claude Code — failide töötlemine lihtsaks</h3>
+                    </div>
+
+                    <div class="step-task">
+                        <p><strong>Claude Code</strong> on terminalis töötav AI assistent, mis saab otse sinu failidega töötada:</p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-muted);">
+                            <li>Loeb ja kirjutab faile sinu arvutis</li>
+                            <li>Käivitab skripte ja näitab tulemusi</li>
+                            <li>Töötleb CSV/Excel faile otse</li>
+                            <li>Debugib vigu ja parandab koodi</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <code><span class="comment"># Näide Claude Code'i kasutamisest:</span>
+
+<span class="string">Sa:</span> Võta failist sonad.csv kõik sõnad ja lisa
+    igaühele Sketch Engine'i sagedus. Salvesta tulemus.
+
+<span class="string">Claude Code:</span> [loeb faili, kirjutab skripti,
+              käivitab selle, salvestab tulemuse]
+
+<span class="string">Sa:</span> Hmm, 3 sõna andsid vea. Paranda.
+
+<span class="string">Claude Code:</span> [analüüsib viga, parandab, käivitab uuesti]</code>
+                    </div>
+
                     <div class="tool-card" style="margin-top: 1rem;">
-                        <h4>Sketch Engine API dokumentatsioon</h4>
-                        <p>API võimalused, endpoindid ja CQL süntaks.</p>
-                        <a href="https://www.sketchengine.eu/documentation/api-documentation/" target="_blank" class="tool-link">API dokumentatsioon →</a>
+                        <h4>Claude Code</h4>
+                        <p>Terminalis töötav AI assistent failide töötlemiseks.</p>
+                        <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" class="tool-link">Tutvu Claude Code'iga →</a>
                     </div>
                 </div>
             </div>
