@@ -1646,27 +1646,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="sql-editor-container">
-                    <label class="sql-editor-label">SQL päring:</label>
-                    <textarea id="sql-editor" placeholder="Kirjuta siia SQL päring...">SELECT * FROM word WHERE lang = 'est';</textarea>
-                </div>
-
-                <div class="sql-buttons">
-                    <button class="sql-run-btn" onclick="runQuery()">
-                        <span>▶</span> Käivita päring
-                    </button>
-                </div>
-
-                <div class="sql-results">
-                    <div class="sql-results-label">
-                        Tulemus: <span id="results-count" class="sql-results-count">0 rida</span>
-                    </div>
-                    <div id="sql-output">
-                        <div class="sql-loading">Andmebaas laeb...</div>
-                    </div>
-                </div>
-
                 <div class="sql-examples-section">
                     <h4>Näitepäringud (kliki, et proovida):</h4>
                     <div class="example-queries">
@@ -1721,6 +1700,27 @@ GROUP BY ds.code;`)">
                         </div>
                     </div>
                 </div>
+                <div class="sql-editor-container">
+                    <label class="sql-editor-label">SQL päring:</label>
+                    <textarea id="sql-editor" placeholder="Kirjuta siia SQL päring...">SELECT * FROM word WHERE lang = 'est';</textarea>
+                </div>
+
+                <div class="sql-buttons">
+                    <button class="sql-run-btn" onclick="runQuery()">
+                        <span>▶</span> Käivita päring
+                    </button>
+                </div>
+
+                <div class="sql-results">
+                    <div class="sql-results-label">
+                        Tulemus: <span id="results-count" class="sql-results-count">0 rida</span>
+                    </div>
+                    <div id="sql-output">
+                        <div class="sql-loading">Andmebaas laeb...</div>
+                    </div>
+                </div>
+
+
             </div>
         </section>
 
