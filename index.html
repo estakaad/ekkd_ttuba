@@ -35,7 +35,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -1083,6 +1083,37 @@
             padding: 1.5rem;
         }
 
+        .sql-three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1400px) {
+            .sql-three-column {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sql-three-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sql-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sql-column h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
         .sql-intro {
             color: var(--text-muted);
             margin-bottom: 1.5rem;
@@ -1136,7 +1167,7 @@
 
         #sql-editor {
             width: 100%;
-            min-height: 120px;
+            min-height: 200px;
             padding: 1rem;
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 1.1rem;
@@ -1195,6 +1226,16 @@
 
         .sql-results {
             margin-top: 1rem;
+        }
+
+        #sql-output {
+            min-height: 580px;
+            max-height: 700px;
+            overflow: auto;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
         }
 
         .sql-results-label {
@@ -1316,7 +1357,8 @@
             border-top: none;
             border-radius: 0 0 0.5rem 0.5rem;
             padding: 1rem;
-            max-height: 400px;
+            min-height: 580px;
+            max-height: 650px;
             overflow: auto;
         }
 
@@ -1587,6 +1629,93 @@
                         <em>„Mul on tabelid word, lexeme, meaning. Anna kõik sõnad, millel on lexeme datasetis 'eki' ja millel on olemas seletus, mille tüüp on definition."</em>
                     </div>
                 </div>
+
+                <!-- SQL with LLM guidance -->
+                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--accent);">
+                    <div class="step-header">
+                        <h3>SQL päringute kirjutamisel — tutvusta SKM-ile andmemudelit</h3>
+                    </div>
+
+                    <div class="step-task">
+                        <p>Et SKM annaks targemaid SQL päringuid, pead talle enne andmebaasi struktuuri tutvustama. Andmemudeli tutvustamiseks võid kasutada eraldi faili, milles see juba kirjas on — nii ei pea iga kord nullist alustama.</p>
+                    </div>
+
+                    <div class="example-box" style="background: #f0fdf4;">
+                        <code style="color: #047857;"><span class="comment"># Näide promptist SQL päringu tellimiseks:</span>
+
+Mul on Ekilexi andmebaas järgmiste tabelitega:
+
+- <span class="string">word</span> (id, value, lang) — sõnad
+- <span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code)
+- <span class="string">meaning</span> (id)
+- <span class="string">definition</span> (id, meaning_id, value)
+- <span class="string">dataset</span> (code, name) — sõnastikud
+
+Kirjuta päring: anna kõik eestikeelsed sõnad datasetist
+"eki", millel on olemas definitsioon.</code>
+                    </div>
+
+                    <div class="tools-limitation" style="margin: 1rem 0;">
+                        <span class="limitation-icon">💡</span>
+                        <div>
+                            <strong>Vihje:</strong> Kopeeri SKM-ile tabelite struktuur (CREATE TABLE laused) või näidisandmed.
+                            Mida rohkem konteksti annad, seda täpsema päringu saad.
+                        </div>
+                    </div>
+
+                    <!-- Data Model Reference -->
+                    <details style="margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                        <summary style="padding: 1rem; cursor: pointer; font-weight: 600; color: #047857;">
+                            📄 Näidisfail: Ekilexi andmemudeli kirjeldus (kliki, et näha)
+                        </summary>
+                        <div style="padding: 0 1rem 1rem 1rem;">
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                                See fail kirjeldab Ekilexi andmebaasi struktuuri. Kopeeri see SKM-ile enne SQL päringute küsimist.
+                            </p>
+                            <div class="example-box" style="max-height: 300px; overflow-y: auto; font-size: 0.8rem;">
+                                <code><span class="comment"># Ekilex Database Model Reference</span>
+
+<span class="keyword">Põhihierarhia:</span>
+WORD → LEXEME → MEANING → DEFINITION
+
+<span class="keyword">Põhitabelid:</span>
+
+<span class="string">word</span> (id, value, lang, homonym_nr, is_public)
+  → Sõnavormid (nt "koer", "maja")
+
+<span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code, level1, level2)
+  → Seob sõna tähendusega kindlas sõnastikus
+
+<span class="string">meaning</span> (id)
+  → Semantiline mõiste
+
+<span class="string">definition</span> (id, meaning_id, value, lang, definition_type_code)
+  → Tähenduse selgitus
+
+<span class="string">dataset</span> (code, name, is_public)
+  → Sõnastik/andmekogu (nt 'eki', 'ss1', 'psv')
+
+<span class="keyword">Klassifikaatorid:</span>
+<span class="string">lexeme_pos</span> (lexeme_id, pos_code) → Sõnaliik
+<span class="string">lexeme_register</span> (lexeme_id, register_code) → Register (kõnek, van)
+<span class="string">meaning_domain</span> (meaning_id, domain_code) → Valdkond
+
+<span class="keyword">Näitepäring:</span>
+<span class="keyword">SELECT</span> w.value, d.value <span class="keyword">AS</span> definition
+<span class="keyword">FROM</span> word w
+<span class="keyword">JOIN</span> lexeme l <span class="keyword">ON</span> l.word_id = w.id
+<span class="keyword">JOIN</span> definition d <span class="keyword">ON</span> d.meaning_id = l.meaning_id
+<span class="keyword">WHERE</span> w.value = <span class="string">'koer'</span>
+  <span class="keyword">AND</span> l.dataset_code = <span class="string">'eki'</span>;</code>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <a href="DATABASE_MODEL.md" target="_blank" class="tool-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; padding: 0.5rem 1rem; border-radius: 0.25rem; border: 1px solid #bbf7d0;">
+                                    📥 Laadi alla täisversioon (DATABASE_MODEL.md)
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+                </div>
             </div>
         </details>
 
@@ -1602,82 +1731,81 @@
                     Proovi ise SQL päringuid teha!
                 </p>
 
-                <div class="table-tabs-container">
-                    <h4 style="color: var(--text-dark); margin-bottom: 1rem;">Tutvu andmetega (kliki tabelit):</h4>
-                    <div class="table-tabs-header">
-                        <button class="table-tab active" onclick="showTab('word')">word</button>
-                        <button class="table-tab" onclick="showTab('meaning')">meaning</button>
-                        <button class="table-tab" onclick="showTab('definition')">definition</button>
-                        <button class="table-tab" onclick="showTab('lexeme')">lexeme</button>
-                        <button class="table-tab" onclick="showTab('dataset')">dataset</button>
+                <div class="sql-three-column">
+                    <!-- Column 1: Tables (sample data) -->
+                    <div class="sql-column">
+                        <h4>📋 Näidisandmed</h4>
+                        <div class="table-tabs-container">
+                            <div class="table-tabs-header">
+                                <button class="table-tab active" onclick="showTab('word')">word</button>
+                                <button class="table-tab" onclick="showTab('meaning')">meaning</button>
+                                <button class="table-tab" onclick="showTab('definition')">definition</button>
+                                <button class="table-tab" onclick="showTab('lexeme')">lexeme</button>
+                                <button class="table-tab" onclick="showTab('dataset')">dataset</button>
+                            </div>
+                            <div class="table-tabs-content">
+                                <div id="tab-word" class="table-tab-panel active">
+                                    <div class="table-description">
+                                        <strong>word</strong> — sõnad
+                                    </div>
+                                    <div id="table-content-word">Laeb...</div>
+                                </div>
+                                <div id="tab-meaning" class="table-tab-panel">
+                                    <div class="table-description">
+                                        <strong>meaning</strong> — tähendused
+                                    </div>
+                                    <div id="table-content-meaning">Laeb...</div>
+                                </div>
+                                <div id="tab-definition" class="table-tab-panel">
+                                    <div class="table-description">
+                                        <strong>definition</strong> — seletused
+                                    </div>
+                                    <div id="table-content-definition">Laeb...</div>
+                                </div>
+                                <div id="tab-lexeme" class="table-tab-panel">
+                                    <div class="table-description">
+                                        <strong>lexeme</strong> — seob sõna ja tähenduse
+                                    </div>
+                                    <div id="table-content-lexeme">Laeb...</div>
+                                </div>
+                                <div id="tab-dataset" class="table-tab-panel">
+                                    <div class="table-description">
+                                        <strong>dataset</strong> — sõnastikud
+                                    </div>
+                                    <div id="table-content-dataset">Laeb...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="table-tabs-content">
-                        <div id="tab-word" class="table-tab-panel active">
-                            <div class="table-description">
-                                <strong>word</strong> — sõnad (keelendid). Üks sõna võib esineda mitu korda (homonüümid, eri keeled).
-                                Veerud: <code>id</code>, <code>value</code> (sõna), <code>lang</code> (keel).
-                            </div>
-                            <div id="table-content-word">Laeb...</div>
-                        </div>
-                        <div id="tab-meaning" class="table-tab-panel">
-                            <div class="table-description">
-                                <strong>meaning</strong> — tähendused. Siin näiteandmetes ainult ID-d, päris andmebaasis rohkem infot.
-                                Veerud: <code>id</code>.
-                            </div>
-                            <div id="table-content-meaning">Laeb...</div>
-                        </div>
-                        <div id="tab-definition" class="table-tab-panel">
-                            <div class="table-description">
-                                <strong>definition</strong> — definitsioonid ehk seletused. Seotud tähendusega (meaning_id).
-                                Veerud: <code>id</code>, <code>meaning_id</code>, <code>value</code> (seletus).
-                            </div>
-                            <div id="table-content-definition">Laeb...</div>
-                        </div>
-                        <div id="tab-lexeme" class="table-tab-panel">
-                            <div class="table-description">
-                                <strong>lexeme</strong> — lekseemid, mis seovad sõna tähendusega konkreetses sõnastikus.
-                                Veerud: <code>id</code>, <code>word_id</code>, <code>meaning_id</code>, <code>dataset_code</code>.
-                            </div>
-                            <div id="table-content-lexeme">Laeb...</div>
-                        </div>
-                        <div id="tab-dataset" class="table-tab-panel">
-                            <div class="table-description">
-                                <strong>dataset</strong> — sõnastikud/andmekogud.
-                                Veerud: <code>code</code> (lühend), <code>name</code> (täisnimi).
-                            </div>
-                            <div id="table-content-dataset">Laeb...</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="sql-examples-section">
-                    <h4>Näitepäringud (kliki, et proovida):</h4>
-                    <div class="example-queries">
-                        <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE lang = 'est';`)">
-                            <span class="example-query-num">1</span>
-                            <div class="example-query-text">
-                                <div class="example-query-desc">Kõik eestikeelsed sõnad</div>
-                                <div class="example-query-sql">SELECT * FROM word WHERE lang = 'est';</div>
-                            </div>
-                        </div>
-                        <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE value = 'park';`)">
-                            <span class="example-query-num">2</span>
-                            <div class="example-query-text">
-                                <div class="example-query-desc">Kõik "park" sõnad</div>
-                                <div class="example-query-sql">SELECT * FROM word WHERE value = 'park';</div>
-                            </div>
-                        </div>
-                        <div class="example-query" onclick="setQuery(`SELECT w.value, w.lang, d.value as definitsioon
+
+                    <!-- Column 2: Query Editor -->
+                    <div class="sql-column">
+                        <h4>✏️ Päring</h4>
+                        <div class="sql-examples-section" style="margin-bottom: 0.5rem;">
+                            <div class="example-queries">
+                                <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE lang = 'est';`)">
+                                    <span class="example-query-num">1</span>
+                                    <div class="example-query-text">
+                                        <div class="example-query-desc">Eestikeelsed sõnad</div>
+                                    </div>
+                                </div>
+                                <div class="example-query" onclick="setQuery(`SELECT * FROM word WHERE value = 'park';`)">
+                                    <span class="example-query-num">2</span>
+                                    <div class="example-query-text">
+                                        <div class="example-query-desc">Kõik "park" sõnad</div>
+                                    </div>
+                                </div>
+                                <div class="example-query" onclick="setQuery(`SELECT w.value, w.lang, d.value as definitsioon
 FROM word w
 JOIN lexeme l ON w.id = l.word_id
 JOIN definition d ON l.meaning_id = d.meaning_id
 WHERE w.value = 'mure' AND w.lang = 'est';`)">
-                            <span class="example-query-num">3</span>
-                            <div class="example-query-text">
-                                <div class="example-query-desc">Sõna "mure" kõik definitsioonid</div>
-                                <div class="example-query-sql">SELECT w.value, d.value as definitsioon FROM word w JOIN ...</div>
-                            </div>
-                        </div>
-                        <div class="example-query" onclick="setQuery(`SELECT w.value, d.value as definitsioon, ds.name as sonastik
+                                    <span class="example-query-num">3</span>
+                                    <div class="example-query-text">
+                                        <div class="example-query-desc">"mure" definitsioonid</div>
+                                    </div>
+                                </div>
+                                <div class="example-query" onclick="setQuery(`SELECT w.value, d.value as definitsioon, ds.name as sonastik
 FROM word w
 JOIN lexeme l ON w.id = l.word_id
 JOIN definition def ON l.meaning_id = def.meaning_id
@@ -1685,45 +1813,44 @@ JOIN dataset ds ON l.dataset_code = ds.code
 JOIN definition d ON l.meaning_id = d.meaning_id
 WHERE w.value = 'park' AND w.lang = 'est'
 GROUP BY w.id, d.id, ds.name;`)">
-                            <span class="example-query-num">4</span>
-                            <div class="example-query-text">
-                                <div class="example-query-desc">"park" definitsioonid koos ilmiku sõnakoguga</div>
-                                <div class="example-query-sql">SELECT w.value, d.value, ds.name FROM word w JOIN ...</div>
-                            </div>
-                        </div>
-                        <div class="example-query" onclick="setQuery(`SELECT ds.name, COUNT(*) as lekseeme
+                                    <span class="example-query-num">4</span>
+                                    <div class="example-query-text">
+                                        <div class="example-query-desc">"park" + sõnakogu</div>
+                                    </div>
+                                </div>
+                                <div class="example-query" onclick="setQuery(`SELECT ds.name, COUNT(*) as lekseeme
 FROM lexeme l
 JOIN dataset ds ON l.dataset_code = ds.code
 GROUP BY ds.code;`)">
-                            <span class="example-query-num">5</span>
-                            <div class="example-query-text">
-                                <div class="example-query-desc">Mitu ilmikut on igas sõnakogus?</div>
-                                <div class="example-query-sql">SELECT ds.name, COUNT(*) FROM lexeme l JOIN dataset ds ...</div>
+                                    <span class="example-query-num">5</span>
+                                    <div class="example-query-text">
+                                        <div class="example-query-desc">Ilmikud sõnakogude kaupa</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sql-editor-container" style="margin-bottom: 0;">
+                            <textarea id="sql-editor" placeholder="Kirjuta siia SQL päring...">SELECT * FROM word WHERE lang = 'est';</textarea>
+                        </div>
+
+                        <div class="sql-buttons">
+                            <button class="sql-run-btn" onclick="runQuery()">
+                                <span>▶</span> Käivita
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Results -->
+                    <div class="sql-column">
+                        <h4>📊 Tulemus <span id="results-count" class="sql-results-count" style="font-weight: normal; font-size: 0.9rem;">0 rida</span></h4>
+                        <div class="sql-results" style="margin: 0;">
+                            <div id="sql-output">
+                                <div class="sql-loading">Andmebaas laeb...</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="sql-editor-container">
-                    <label class="sql-editor-label">SQL päring:</label>
-                    <textarea id="sql-editor" placeholder="Kirjuta siia SQL päring...">SELECT * FROM word WHERE lang = 'est';</textarea>
-                </div>
-
-                <div class="sql-buttons">
-                    <button class="sql-run-btn" onclick="runQuery()">
-                        <span>▶</span> Käivita päring
-                    </button>
-                </div>
-
-                <div class="sql-results">
-                    <div class="sql-results-label">
-                        Tulemus: <span id="results-count" class="sql-results-count">0 rida</span>
-                    </div>
-                    <div id="sql-output">
-                        <div class="sql-loading">Andmebaas laeb...</div>
-                    </div>
-                </div>
-
-
             </div>
         </section>
 
@@ -1867,92 +1994,6 @@ Kirjuta mulle Pythoni skript, mis teeb järgmist:
                         <strong>Mida täpsemalt kirjeldad, seda parema skripti saad.</strong>
                         Maini failinimesid, veergude nimesid, väljundi formaati, pauside vajadust jne.
                     </div>
-                </div>
-
-                <div class="workflow-step-detail" style="margin-top: 1.5rem; border-left-color: var(--accent);">
-                    <div class="step-header">
-                        <h3>SQL päringute kirjutamisel — tutvusta andmemudelit. Andmemudeli tutvustamiseks võid kasutada eraldi faili, milles see juba kirjas on. Nii ei pea iga kord nullist alustama.</h3>
-                    </div>
-
-                    <div class="step-task">
-                        <p>Et SKM annaks targemaid SQL päringuid, pead talle enne andmebaasi struktuuri tutvustama:</p>
-                    </div>
-
-                    <div class="example-box" style="background: #f0fdf4;">
-                        <code style="color: #047857;"><span class="comment"># Näide promptist SQL päringu tellimiseks:</span>
-
-Mul on Ekilexi andmebaas järgmiste tabelitega:
-
-- <span class="string">word</span> (id, value, lang) — sõnad
-- <span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code)
-- <span class="string">meaning</span> (id)
-- <span class="string">definition</span> (id, meaning_id, value)
-- <span class="string">dataset</span> (code, name) — sõnastikud
-
-Kirjuta päring: anna kõik eestikeelsed sõnad datasetist
-"eki", millel on olemas definitsioon.</code>
-                    </div>
-
-                    <div class="tools-limitation" style="margin: 1rem 0;">
-                        <span class="limitation-icon">💡</span>
-                        <div>
-                            <strong>Vihje:</strong> Kopeeri SKM-ile tabelite struktuur (CREATE TABLE laused) või näidisandmed.
-                            Mida rohkem konteksti annad, seda täpsema päringu saad.
-                        </div>
-                    </div>
-
-                    <!-- Data Model Reference -->
-                    <details style="margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
-                        <summary style="padding: 1rem; cursor: pointer; font-weight: 600; color: #047857;">
-                            📄 Näidisfail: Ekilexi andmemudeli kirjeldus (kliki, et näha)
-                        </summary>
-                        <div style="padding: 0 1rem 1rem 1rem;">
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
-                                See fail kirjeldab Ekilexi andmebaasi struktuuri. Kopeeri see SKM-ile enne SQL päringute küsimist.
-                            </p>
-                            <div class="example-box" style="max-height: 300px; overflow-y: auto; font-size: 0.8rem;">
-                                <code><span class="comment"># Ekilex Database Model Reference</span>
-
-<span class="keyword">Põhihierarhia:</span>
-WORD → LEXEME → MEANING → DEFINITION
-
-<span class="keyword">Põhitabelid:</span>
-
-<span class="string">word</span> (id, value, lang, homonym_nr, is_public)
-  → Sõnavormid (nt "koer", "maja")
-
-<span class="string">lexeme</span> (id, word_id, meaning_id, dataset_code, level1, level2)
-  → Seob sõna tähendusega kindlas sõnastikus
-
-<span class="string">meaning</span> (id)
-  → Semantiline mõiste
-
-<span class="string">definition</span> (id, meaning_id, value, lang, definition_type_code)
-  → Tähenduse selgitus
-
-<span class="string">dataset</span> (code, name, is_public)
-  → Sõnastik/andmekogu (nt 'eki', 'ss1', 'psv')
-
-<span class="keyword">Klassifikaatorid:</span>
-<span class="string">lexeme_pos</span> (lexeme_id, pos_code) → Sõnaliik
-<span class="string">lexeme_register</span> (lexeme_id, register_code) → Register (kõnek, van)
-<span class="string">meaning_domain</span> (meaning_id, domain_code) → Valdkond
-
-<span class="keyword">Näitepäring:</span>
-<span class="keyword">SELECT</span> w.value, d.value <span class="keyword">AS</span> definition
-<span class="keyword">FROM</span> word w
-<span class="keyword">JOIN</span> lexeme l <span class="keyword">ON</span> l.word_id = w.id
-<span class="keyword">JOIN</span> definition d <span class="keyword">ON</span> d.meaning_id = l.meaning_id
-<span class="keyword">WHERE</span> w.value = <span class="string">'koer'</span>
-  <span class="keyword">AND</span> l.dataset_code = <span class="string">'eki'</span>;</code>
-                            </div>
-                            <div style="margin-top: 1rem;">
-                                <a href="DATABASE_MODEL.md" target="_blank" class="tool-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; padding: 0.5rem 1rem; border-radius: 0.25rem; border: 1px solid #bbf7d0;">
-                                    📥 Laadi alla täisversioon (DATABASE_MODEL.md)
-                                </a>
-                            </div>
-                        </div>
-                    </details>
                 </div>
 
             </div>
